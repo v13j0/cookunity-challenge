@@ -1,0 +1,21 @@
+.card {
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    position: relative;
+
+    .name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .hp {
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1;
+    }
+}
