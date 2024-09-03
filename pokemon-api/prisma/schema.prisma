@@ -1,0 +1,22 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Card {
+  id          Int      @id @default(autoincrement())
+  thumb       String
+  name        String
+  type        String
+  expansion   String
+  rarity      String
+  hp          Int
+  attack      Int
+  defense     Int
+  weaknesses  String[]
+  resistances String[]
+}

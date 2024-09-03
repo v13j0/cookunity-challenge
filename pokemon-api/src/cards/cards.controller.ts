@@ -1,0 +1,179 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Logger,
+  NotFoundException,
+  InternalServerErrorException,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiProperty,
+} from '@nestjs/swagger';
+import { CardsService } from './cards.service';
+import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
+
+class BattleResult {
+  @ApiProperty()
+  winner: string;
+
+  @ApiProperty()
+  details: string;
+}
+
+class WeaknessesAndResistances {
+  @ApiProperty({ type: [Card] })
+  weaknesses: Card[];
+
+  @ApiProperty({ type: [Card] })
+  resistances: Card[];
+}
+
+@ApiTags('cards')
+@Controller('cards')
+export class CardsController {
+  private readonly logger = new Logger(CardsController.name);
+  constructor(private readonly cardsService: CardsService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new card' })
+  @ApiResponse({
+    status: 201,
+    description: 'The card has been successfully created.',
+    type: Card,
+  })
+  async create(@Body() createCardDto: CreateCardDto): Promise<Card> {
+    return this.cardsService.create(createCardDto);
+  }
+
+  @Get('expansions')
+  @ApiOperation({ summary: 'Get all unique expansions' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all unique expansions.',
+    type: [String],
+  })
+  async getUniqueExpansions(): Promise<string[]> {
+    try {
+      return await this.cardsService.getUniqueExpansions();
+    } catch (error) {
+      this.logger.error(
+        `Error fetching expansions: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException('Failed to fetch expansions');
+    }
+  }
+
+  @Get('types')
+  @ApiOperation({ summary: 'Get all unique types' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all unique types.',
+    type: [String],
+  })
+  async getUniqueTypes(): Promise<string[]> {
+    try {
+      return await this.cardsService.getUniqueTypes();
+    } catch (error) {
+      this.logger.error(`Error fetching types: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to fetch types');
+    }
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all cards with optional filters' })
+  @ApiQuery({ name: 'name', required: false, type: String })
+  @ApiQuery({ name: 'expansion', required: false, type: String })
+  @ApiQuery({ name: 'type', required: false, type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all cards matching the filters.',
+    type: [Card],
+  })
+  async findAll(@Query() filters: Record<string, any>): Promise<Card[]> {
+    return this.cardsService.findAll(filters);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a card by ID' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return the card with the specified ID.',
+    type: Card,
+  })
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Card> {
+    const card = await this.cardsService.findOne(id);
+    if (!card) {
+      throw new NotFoundException(`Card with ID ${id} not found`);
+    }
+    return card;
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update a card' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'The card has been successfully updated.',
+    type: Card,
+  })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCardDto: UpdateCardDto,
+  ): Promise<Card> {
+    return this.cardsService.update(id, updateCardDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a card' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'The card has been successfully deleted.',
+  })
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.cardsService.remove(id);
+  }
+
+  @Get('battle/:attackerId/:defenderId')
+  @ApiOperation({ summary: 'Simulate a battle between two cards' })
+  @ApiParam({ name: 'attackerId', type: 'number' })
+  @ApiParam({ name: 'defenderId', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return the battle result.',
+    type: BattleResult,
+  })
+  async simulateBattle(
+    @Param('attackerId', ParseIntPipe) attackerId: number,
+    @Param('defenderId', ParseIntPipe) defenderId: number,
+  ): Promise<BattleResult> {
+    return this.cardsService.simulateBattle(attackerId, defenderId);
+  }
+
+  @Get(':id/weaknesses-resistances')
+  @ApiOperation({ summary: 'Get weaknesses and resistances for a card' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return the weaknesses and resistances.',
+    type: WeaknessesAndResistances,
+  })
+  async getWeaknessesAndResistances(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<WeaknessesAndResistances> {
+    return this.cardsService.getWeaknessesAndResistances(id);
+  }
+}
