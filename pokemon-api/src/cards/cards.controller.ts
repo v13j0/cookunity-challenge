@@ -17,7 +17,6 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiQuery,
   ApiProperty,
   ApiBody,
 } from '@nestjs/swagger';
@@ -104,17 +103,12 @@ export class CardsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all cards with optional filters' })
-  @ApiQuery({ name: 'name', required: false, type: String })
-  @ApiQuery({ name: 'expansion', required: false, type: String })
-  @ApiQuery({ name: 'type', required: false, type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'Return all cards matching the filters.',
-    type: [Card],
-  })
-  async findAll(@Query() filters: Record<string, any>): Promise<Card[]> {
-    return this.cardsService.findAll(filters);
+  async findAll(
+    @Query() filters: Record<string, any>,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ): Promise<Card[]> {
+    return this.cardsService.findAll(filters, page, limit);
   }
 
   @Get(':id')

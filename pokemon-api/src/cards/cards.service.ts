@@ -30,11 +30,11 @@ export class CardsService {
     }
   }
 
-  async findAll(filters: {
-    name?: string;
-    expansion?: string;
-    type?: string;
-  }): Promise<Card[]> {
+  async findAll(
+    filters: { name?: string; expansion?: string; type?: string },
+    page: number,
+    limit: number,
+  ): Promise<Card[]> {
     try {
       const { name, expansion, type } = filters;
       const cards = await this.prisma.card.findMany({
@@ -43,6 +43,8 @@ export class CardsService {
           expansion: expansion || undefined,
           type: type || undefined,
         },
+        skip: (page - 1) * limit,
+        take: limit,
       });
       this.logger.log(`Found ${cards.length} cards`);
       return cards;
