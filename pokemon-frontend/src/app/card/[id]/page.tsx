@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Card from '../../components/Card';
 
 interface Card {
     id: number;
@@ -104,43 +105,30 @@ const CardDetail: React.FC = () => {
             <Link href="/" className="text-blue-500 hover:underline mb-4 block">
                 &larr; Back to all cards
             </Link>
-            <h1 className="text-3xl font-bold mb-4">{card.name}</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <img src={card.thumb} alt={card.name} className="w-full h-auto" />
+            <div className='flex'>
+                <Card {...card} />
+                <div className="ml-8">
+                    <h2 className="text-2xl font-bold mb-4">Battle</h2>
+                    <select
+                        value={opponentId}
+                        onChange={(e) => setOpponentId(e.target.value)}
+                        className="p-2 border rounded mr-4"
+                    >
+                        <option value="">Select an opponent</option>
+                        {allCards.filter(c => c.id !== card.id).map((c) => (
+                            <option key={c.id} value={c.id}>
+                                {c.name}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={handleBattle}
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                    >
+                        Battle!
+                    </button>
+                    {battleResult && <p className="mt-4">{battleResult}</p>}
                 </div>
-                <div>
-                    <p><strong>Type:</strong> {card.type}</p>
-                    <p><strong>HP:</strong> {card.hp}</p>
-                    <p><strong>Attack:</strong> {card.attack}</p>
-                    <p><strong>Defense:</strong> {card.defense}</p>
-                    <p><strong>Weaknesses:</strong> {card.weaknesses.join(', ')}</p>
-                    <p><strong>Resistances:</strong> {card.resistances.join(', ')}</p>
-                    <p><strong>Expansion:</strong> {card.expansion}</p>
-                    <p><strong>Rarity:</strong> {card.rarity}</p>
-                </div>
-            </div>
-            <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">Battle</h2>
-                <select
-                    value={opponentId}
-                    onChange={(e) => setOpponentId(e.target.value)}
-                    className="p-2 border rounded mr-4"
-                >
-                    <option value="">Select an opponent</option>
-                    {allCards.filter(c => c.id !== card.id).map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
-                <button
-                    onClick={handleBattle}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                    Battle!
-                </button>
-                {battleResult && <p className="mt-4">{battleResult}</p>}
             </div>
         </div>
     );
