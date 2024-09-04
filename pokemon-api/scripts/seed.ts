@@ -6,14 +6,13 @@ async function main() {
   const pokemons = [
     {
       thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/feraligatr.avif', // Reemplaza con la URL o path de la imagen
+        'https://img.pokemondb.net/sprites/home/normal/2x/avif/feraligatr.avif',
       name: 'Feraligatr',
       type: 'Water',
       expansion: 'Neo Genesis',
       rarity: 'Holo Rare',
-      hp: 160, // Asignado a partir del ataque
+      hp: 160,
       attack: 320,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Electric'],
       resistances: [],
     },
@@ -23,9 +22,8 @@ async function main() {
       type: 'Rock/Ground',
       expansion: 'Base Set',
       rarity: 'Common',
-      hp: 40, // Asignado a partir del ataque
+      hp: 40,
       attack: 80,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Water'],
       resistances: ['Electric'],
     },
@@ -36,9 +34,8 @@ async function main() {
       type: 'Electric',
       expansion: 'Base Set',
       rarity: 'Common',
-      hp: 20, // Asignado a partir del ataque
+      hp: 20,
       attack: 20,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Fighting'],
       resistances: ['Metal'],
     },
@@ -49,9 +46,8 @@ async function main() {
       type: 'Dark/Ice',
       expansion: 'Neo Genesis',
       rarity: 'Uncommon',
-      hp: 20, // Asignado a partir del ataque
+      hp: 20,
       attack: 20,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Fighting'],
       resistances: ['Psychic'],
     },
@@ -62,9 +58,8 @@ async function main() {
       type: 'Metal/Bug',
       expansion: 'Neo Discovery',
       rarity: 'Holo Rare',
-      hp: 60, // Asignado a partir del ataque
+      hp: 60,
       attack: 60,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Fire'],
       resistances: ['Psychic'],
     },
@@ -75,9 +70,8 @@ async function main() {
       type: 'Grass',
       expansion: 'EX Ruby & Sapphire',
       rarity: 'Common',
-      hp: 40, // Asignado a partir del ataque
+      hp: 40,
       attack: 40,
-      defense: 0, // No especificado, puedes ajustar
       weaknesses: ['Fire'],
       resistances: [],
     },
