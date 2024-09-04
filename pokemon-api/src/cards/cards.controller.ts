@@ -19,24 +19,36 @@ import {
   ApiParam,
   ApiQuery,
   ApiProperty,
+  ApiBody,
 } from '@nestjs/swagger';
 import { CardsService } from './cards.service';
 import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
 
 class BattleResult {
-  @ApiProperty()
+  @ApiProperty({ example: 'Pikachu', description: 'The winner of the battle' })
   winner: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Pikachu used Thunder Shock and won!',
+    description: 'Details of the battle',
+  })
   details: string;
 }
 
 class WeaknessesAndResistances {
-  @ApiProperty({ type: [Card] })
-  weaknesses: Card[];
+  @ApiProperty({
+    type: [String],
+    example: ['Ground'],
+    description: 'The weaknesses of the Pokémon',
+  })
+  weaknesses: string[];
 
-  @ApiProperty({ type: [Card] })
-  resistances: Card[];
+  @ApiProperty({
+    type: [String],
+    example: ['Electric'],
+    description: 'The resistances of the Pokémon',
+  })
+  resistances: string[];
 }
 
 @ApiTags('cards')
@@ -76,10 +88,10 @@ export class CardsController {
   }
 
   @Get('types')
-  @ApiOperation({ summary: 'Get all unique types' })
+  @ApiOperation({ summary: 'Get unique card types' })
   @ApiResponse({
     status: 200,
-    description: 'Return all unique types.',
+    description: 'Return unique card types.',
     type: [String],
   })
   async getUniqueTypes(): Promise<string[]> {
@@ -124,9 +136,10 @@ export class CardsController {
   @Put(':id')
   @ApiOperation({ summary: 'Update a card' })
   @ApiParam({ name: 'id', type: 'number' })
+  @ApiBody({ description: 'The card data to update', type: Card })
   @ApiResponse({
     status: 200,
-    description: 'The card has been successfully updated.',
+    description: 'The updated card.',
     type: Card,
   })
   async update(

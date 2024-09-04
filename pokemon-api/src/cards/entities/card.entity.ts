@@ -48,9 +48,6 @@ export class Card {
 }
 
 export class CreateCardDto {
-  @ApiProperty({ example: 1, description: 'The unique identifier of the card' })
-  id: number;
-
   @ApiProperty({
     example: 'pikachu.png',
     description: 'The thumbnail image of the Pokémon',
@@ -165,5 +162,3 @@ export class UpdateCardDto {
   })
   resistances?: string[];
 }
-
-export class CardResponse extends Card {}

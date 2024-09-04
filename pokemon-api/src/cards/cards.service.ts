@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
+import { WeaknessesAndResistances } from './entities/weaknesses-and-resistances.entity';
 
 @Injectable()
 export class CardsService {
@@ -154,17 +155,17 @@ export class CardsService {
 
   async getWeaknessesAndResistances(
     cardId: number,
-  ): Promise<{ weaknesses: Card[]; resistances: Card[] }> {
+  ): Promise<WeaknessesAndResistances> {
     try {
       const card = await this.findOne(cardId);
       const allCards = await this.prisma.card.findMany();
 
-      const weaknesses = allCards.filter((c) =>
-        card.weaknesses.includes(c.type),
-      );
-      const resistances = allCards.filter((c) =>
-        card.resistances.includes(c.type),
-      );
+      const weaknesses = allCards
+        .filter((c) => card.weaknesses.includes(c.type))
+        .map((c) => c.type);
+      const resistances = allCards
+        .filter((c) => card.resistances.includes(c.type))
+        .map((c) => c.type);
 
       return { weaknesses, resistances };
     } catch (error) {
