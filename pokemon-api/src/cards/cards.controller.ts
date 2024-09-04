@@ -78,10 +78,8 @@ export class CardsController {
     try {
       return await this.cardsService.getUniqueExpansions();
     } catch (error) {
-      this.logger.error(
-        `Error fetching expansions: ${error.message}`,
-        error.stack,
-      );
+      const err = error as Error;
+      this.logger.error(`Error fetching expansions: ${err.message}`, err.stack);
       throw new InternalServerErrorException('Failed to fetch expansions');
     }
   }
@@ -97,7 +95,8 @@ export class CardsController {
     try {
       return await this.cardsService.getUniqueTypes();
     } catch (error) {
-      this.logger.error(`Error fetching types: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error fetching types: ${err.message}`, err.stack);
       throw new InternalServerErrorException('Failed to fetch types');
     }
   }

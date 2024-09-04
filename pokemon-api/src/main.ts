@@ -9,8 +9,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // CORS configuration - replace 'http://localhost:3000' with your frontend URL
   app.enableCors({
-    origin: 'http://localhost:3000', // Your frontend URL
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -24,10 +25,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
 
-  await app.listen(3001);
-  logger.log('Application is running on: http://localhost:3001');
+  // Use process.env.PORT for dynamic port assignment in Railway
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  logger.log(`Application is running on: http://localhost:${port}`);
   logger.log(
-    'Swagger documentation is available at: http://localhost:3001/api-docs',
+    `Swagger documentation is available at: http://localhost:${port}/api-docs`,
   );
 }
+
 bootstrap();

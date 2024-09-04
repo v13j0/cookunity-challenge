@@ -5,7 +5,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
 import { WeaknessesAndResistances } from './entities/weaknesses-and-resistances.entity';
 
@@ -23,9 +22,10 @@ export class CardsService {
       this.logger.log(`Created card: ${JSON.stringify(card)}`);
       return card;
     } catch (error) {
-      this.logger.error(`Error creating card: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error creating card: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to create card: ${error.message}`,
+        `Failed to create card: ${err.message}`,
       );
     }
   }
@@ -49,9 +49,10 @@ export class CardsService {
       this.logger.log(`Found ${cards.length} cards`);
       return cards;
     } catch (error) {
-      this.logger.error(`Error finding cards: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error finding cards: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to fetch cards: ${error.message}`,
+        `Failed to fetch cards: ${err.message}`,
       );
     }
   }
@@ -71,50 +72,43 @@ export class CardsService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.logger.error(`Error finding card: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error finding card: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to fetch card: ${error.message}`,
+        `Failed to fetch card: ${err.message}`,
       );
     }
   }
 
   async update(id: number, updateCardDto: UpdateCardDto): Promise<Card> {
     try {
-      const updatedCard = await this.prisma.card.update({
+      const card = await this.prisma.card.update({
         where: { id },
         data: updateCardDto,
       });
-      this.logger.log(`Updated card: ${JSON.stringify(updatedCard)}`);
-      return updatedCard;
+      this.logger.log(`Updated card: ${JSON.stringify(card)}`);
+      return card;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException(`Card with ID ${id} not found`);
-        }
-      }
-      this.logger.error(`Error updating card: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error updating card: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to update card: ${error.message}`,
+        `Failed to update card: ${err.message}`,
       );
     }
   }
 
   async remove(id: number): Promise<Card> {
     try {
-      const deletedCard = await this.prisma.card.delete({
+      const card = await this.prisma.card.delete({
         where: { id },
       });
-      this.logger.log(`Deleted card: ${JSON.stringify(deletedCard)}`);
-      return deletedCard;
+      this.logger.log(`Deleted card: ${JSON.stringify(card)}`);
+      return card;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException(`Card with ID ${id} not found`);
-        }
-      }
-      this.logger.error(`Error deleting card: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error deleting card: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to delete card: ${error.message}`,
+        `Failed to delete card: ${err.message}`,
       );
     }
   }
@@ -127,12 +121,13 @@ export class CardsService {
       });
       return expansions.map((card) => card.expansion);
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        `Error fetching unique expansions: ${error.message}`,
-        error.stack,
+        `Error fetching unique expansions: ${err.message}`,
+        err.stack,
       );
       throw new InternalServerErrorException(
-        `Failed to fetch unique expansions: ${error.message}`,
+        `Failed to fetch unique expansions: ${err.message}`,
       );
     }
   }
@@ -145,12 +140,13 @@ export class CardsService {
       });
       return types.map((card) => card.type);
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        `Error fetching unique types: ${error.message}`,
-        error.stack,
+        `Error fetching unique types: ${err.message}`,
+        err.stack,
       );
       throw new InternalServerErrorException(
-        `Failed to fetch unique types: ${error.message}`,
+        `Failed to fetch unique types: ${err.message}`,
       );
     }
   }
@@ -171,12 +167,13 @@ export class CardsService {
 
       return { weaknesses, resistances };
     } catch (error) {
+      const err = error as Error;
       this.logger.error(
-        `Error getting weaknesses and resistances: ${error.message}`,
-        error.stack,
+        `Error getting weaknesses and resistances: ${err.message}`,
+        err.stack,
       );
       throw new InternalServerErrorException(
-        `Failed to get weaknesses and resistances: ${error.message}`,
+        `Failed to get weaknesses and resistances: ${err.message}`,
       );
     }
   }
@@ -215,12 +212,10 @@ export class CardsService {
         details,
       };
     } catch (error) {
-      this.logger.error(
-        `Error in simulateBattle: ${error.message}`,
-        error.stack,
-      );
+      const err = error as Error;
+      this.logger.error(`Error in simulateBattle: ${err.message}`, err.stack);
       throw new InternalServerErrorException(
-        `Failed to simulate battle: ${error.message}`,
+        `Failed to simulate battle: ${err.message}`,
       );
     }
   }
