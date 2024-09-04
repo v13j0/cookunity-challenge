@@ -11,7 +11,6 @@ interface Card {
     type: string;
     hp: number;
     attack: number;
-    defense: number;
     thumb: string;
     weaknesses: string[];
     resistances: string[];

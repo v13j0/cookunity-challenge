@@ -31,9 +31,6 @@ export class Card {
   @ApiProperty({ example: 50, description: 'The attack power of the Pokémon' })
   attack: number;
 
-  @ApiProperty({ example: 40, description: 'The defense of the Pokémon' })
-  defense: number;
-
   @ApiProperty({
     example: ['Ground'],
     description: 'The weaknesses of the Pokémon',
@@ -74,9 +71,6 @@ export class CreateCardDto {
 
   @ApiProperty({ example: 50, description: 'The attack power of the Pokémon' })
   attack: number;
-
-  @ApiProperty({ example: 40, description: 'The defense of the Pokémon' })
-  defense: number;
 
   @ApiProperty({
     example: ['Ground'],
@@ -140,13 +134,6 @@ export class UpdateCardDto {
     required: false,
   })
   attack?: number;
-
-  @ApiProperty({
-    example: 40,
-    description: 'The defense of the Pokémon',
-    required: false,
-  })
-  defense?: number;
 
   @ApiProperty({
     example: ['Ground'],

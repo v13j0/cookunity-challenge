@@ -11,7 +11,6 @@ interface Card {
   type: string;
   hp: number;
   attack: number;
-  defense: number;
   thumb: string;
   weaknesses: string[];
   resistances: string[];
@@ -97,7 +96,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Pokémon Card Collection</h1>
+      <h1 className="text-3xl font-bold mb-4">Pokémon App</h1>
 
       <div className="mb-4 flex space-x-4">
         <input

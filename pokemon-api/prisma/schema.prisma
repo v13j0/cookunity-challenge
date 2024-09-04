@@ -16,7 +16,6 @@ model Card {
   rarity      String
   hp          Int
   attack      Int
-  defense     Int
   weaknesses  String[]
   resistances String[]
 }
