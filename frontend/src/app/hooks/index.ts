@@ -1,4 +1,18 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../config";
+
+interface Card {
+  id: number;
+  name: string;
+  type: string;
+  hp: number;
+  attack: number;
+  thumb: string;
+  weaknesses: string[];
+  resistances: string[];
+  expansion: string;
+  rarity: string;
+}
 
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -14,19 +28,6 @@ export function useDebounce<T>(value: T, delay: number): T {
   }, [value, delay]);
 
   return debouncedValue;
-}
-
-interface Card {
-  id: number;
-  name: string;
-  type: string;
-  hp: number;
-  attack: number;
-  thumb: string;
-  weaknesses: string[];
-  resistances: string[];
-  expansion: string;
-  rarity: string;
 }
 
 export function useCards(
@@ -49,13 +50,26 @@ export function useCards(
           ...(typeFilter && { type: typeFilter }),
         }).toString();
 
-        const response = await fetch(
-          `http://localhost:3001/cards?${queryParams}`
-        );
+        const url = `${API_URL}/cards?${queryParams}`;
+        console.log("Fetching cards from:", url);
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any other headers your API might need
+          },
+        });
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", response.headers);
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const data = await response.json();
+        console.log("Fetched data:", data);
         setCards(data);
       } catch (error) {
         console.error("Error fetching cards:", error);
@@ -78,7 +92,7 @@ export function useExpansionsAndTypes() {
   useEffect(() => {
     const fetchExpansions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/cards/expansions");
+        const response = await fetch(`${API_URL}/cards/expansions`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -91,7 +105,7 @@ export function useExpansionsAndTypes() {
 
     const fetchTypes = async () => {
       try {
-        const response = await fetch("http://localhost:3001/cards/types");
+        const response = await fetch(`${API_URL}/cards/types`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

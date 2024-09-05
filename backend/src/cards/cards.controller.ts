@@ -107,7 +107,17 @@ export class CardsController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ): Promise<Card[]> {
-    return this.cardsService.findAll(filters, page, limit);
+    this.logger.log(
+      `Received request for cards with query: ${JSON.stringify(filters)}`,
+    );
+    try {
+      const result = await this.cardsService.findAll(filters, page, limit);
+      this.logger.log(`Returning ${result.length} cards`);
+      return result;
+    } catch (error) {
+      this.logger.error(`Error fetching cards: ${error.message}`, error.stack);
+      throw error; // Let NestJS handle the error response
+    }
   }
 
   @Get(':id')

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import Card from "../../components/Card";
+import Card from "../../components/card/Card";
 import { useDebounce, useCards, useExpansionsAndTypes } from "../../hooks/index";
 
 interface Card {
@@ -19,6 +19,9 @@ interface Card {
 }
 
 const HomeComponent: React.FC = () => {
+  useEffect(() => {
+    console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL);
+  }, []);
   const [nameFilter, setNameFilter] = useState("");
   const [expansionFilter, setExpansionFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");

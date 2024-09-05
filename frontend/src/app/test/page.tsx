@@ -8,7 +8,7 @@ export default function TestBattle() {
 
     const handleBattle = async () => {
         try {
-            const response = await fetch(`http://localhost:3001/cards/battle/${attacker}/${defender}`);
+            const response = await fetch(`/api/cards/battle/${attacker}/${defender}`);
             const data = await response.json();
             setResult(data ? 'Attacker wins!' : 'Defender survives!');
         } catch (error) {

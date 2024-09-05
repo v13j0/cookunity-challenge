@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import Card from '../../components/Card';
+import Card from '../../components/card/Card';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 interface Card {
     id: number;
@@ -30,7 +32,7 @@ const CardDetail: React.FC = () => {
         const fetchCard = async () => {
             console.log('Frontend: Fetching card with ID:', params.id);
             try {
-                const response = await fetch(`http://localhost:3001/cards/${params.id}`);
+                const response = await fetch(`${API_URL}/cards/${params.id}`);
                 console.log('Frontend: Response status:', response.status);
                 console.log('Frontend: Response headers:', response.headers);
 
@@ -56,7 +58,7 @@ const CardDetail: React.FC = () => {
 
         const fetchAllCards = async () => {
             try {
-                const response = await fetch('http://localhost:3001/cards');
+                const response = await fetch(`${API_URL}/cards`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -79,7 +81,7 @@ const CardDetail: React.FC = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3001/cards/battle/${card.id}/${opponentId}`);
+            const response = await fetch(`${API_URL}/cards/battle/${card.id}/${opponentId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
