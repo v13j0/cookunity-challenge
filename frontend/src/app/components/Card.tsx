@@ -21,7 +21,7 @@ const Card: React.FC<CardProps> = ({ name, type, hp, attack, thumb, weaknesses, 
                 <h2 className="name">{name}</h2>
                 <p className="hp">HP {hp}</p>
             </div>
-            <Image className="thumb" src={thumb} alt={name} width={300} height={300} />
+            <Image className="thumb" src={`/images/${thumb}`} alt={name} width={300} height={300} />
             <div className="abilities">
                 <div className='flex flex-row justify-between'>
                     <p><strong>Type: </strong>{type}</p>
