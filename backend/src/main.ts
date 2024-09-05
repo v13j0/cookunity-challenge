@@ -6,11 +6,19 @@ async function bootstrap() {
   dotenv.config(); // Load environment variables
   const app = await NestFactory.create(AppModule);
 
+  const allowedOrigins = [
+    'https://cookunity-challenge-frontend.vercel.app',
+    'http://localhost:3000', // Keep this for local development
+  ];
+
   app.enableCors({
-    origin:
-      process.env.FRONTEND_URL ||
-      'http://localhost:3000' ||
-      'https://cookunity-challenge.vercel.app',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
