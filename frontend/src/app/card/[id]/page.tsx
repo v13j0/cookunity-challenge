@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Card from '../../components/card/Card';
 import { Card as CardTypes } from '../../types/Card';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+import { API_URL } from '../../config';
 
 
 const CardDetail: React.FC = () => {

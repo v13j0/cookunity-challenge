@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Card from "../../components/card/Card";
-import { useDebounce, useExpansionsAndTypes } from "../../hooks/index";
+import { useFetchExpansionsAndTypes, useFetchCards } from "../../hooks/index";
 import { Card as CardType } from "../../types/Card";
 
 interface HomeProps {
@@ -28,40 +28,8 @@ const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, init
   const [nameFilter, setNameFilter] = useState("");
   const [expansionFilter, setExpansionFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
-  const [cards, setCards] = useState<CardType[]>(initialCards);
-  const [loading, setLoading] = useState(initialLoading);
-  const [error, setError] = useState(initialError);
-
-  const debouncedNameFilter = useDebounce(nameFilter, 300);
-  const { expansions, types } = useExpansionsAndTypes();
-
-  useEffect(() => {
-    const fetchCards = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const queryParams = new URLSearchParams({
-          ...(debouncedNameFilter && { name: debouncedNameFilter }),
-          ...(expansionFilter && { expansion: expansionFilter }),
-          ...(typeFilter && { type: typeFilter }),
-        }).toString();
-
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/cards?${queryParams}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setCards(data);
-      } catch (error) {
-        setError("Failed to fetch cards. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCards();
-  }, [debouncedNameFilter, expansionFilter, typeFilter]);
+  const { expansions, types } = useFetchExpansionsAndTypes();
+  const { cards, loading, error } = useFetchCards(nameFilter, expansionFilter, typeFilter);
 
   return (
     <div className="container mx-auto p-4 flex flex-col items-center">
@@ -81,7 +49,7 @@ const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, init
           className="p-2 border rounded"
         >
           <option value="">All Expansions</option>
-          {expansions.map((expansion) => (
+          {Array.isArray(expansions) && expansions.map((expansion) => (
             <option key={expansion} value={expansion}>
               {expansion}
             </option>
@@ -93,7 +61,7 @@ const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, init
           className="p-2 border rounded"
         >
           <option value="">All Types</option>
-          {types.map((type) => (
+          {Array.isArray(types) && types.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

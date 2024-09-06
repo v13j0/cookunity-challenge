@@ -26,26 +26,12 @@ const Card: React.FC<CardProps> = ({ name, type, hp, attack, thumb, weaknesses, 
             <div className='w-full rounded-lg overflow-hidden bg-white border border-gray-200'>
                 <Image className="thumb" src={`/images/${thumb}`} alt={name} width={200} height={200} priority />
             </div>
-            <div className="abilities">
-                <div className='flex flex-col'>
-                    <p><strong>Type: </strong>{type}</p>
-                    <p><strong>Attack: </strong>{attack}</p>
-                </div>
-                <div className='flex flex-col'>
-                    <p><strong>Weaknesses: </strong>
-                        {weaknesses?.map((weakness, index) => (
-                            <span key={index}>{weakness}</span>
-                        ))}
-                    </p>
-                    {weaknesses?.length === 0 && <span>None</span>}
-                    <p><strong>Resistances: </strong>
-                        {resistances?.map((resistance, index) => (
-                            <span key={index}>{resistance}</span>
-                        ))}
-                        {resistances?.length === 0 && <span>None</span>}
-                    </p>
-                </div>
-            </div>
+            <ul className="abilities">
+                <li><strong>Type:</strong> {type}</li>
+                <li><strong>Attack:</strong> {attack}</li>
+                <li><strong>Weaknesses:</strong> {weaknesses?.map(w => <span key={w}>{w}</span>)}</li>
+                <li><strong>Resistances:</strong> {resistances?.map(r => <span key={r}>{r}</span>)}</li>
+            </ul>
             <div className="footer flex flex-col w-full">
                 <p>Expansion: {expansion}</p>
                 <p>Rarity: {rarity}</p>

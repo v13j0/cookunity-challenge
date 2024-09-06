@@ -84,40 +84,51 @@ export function useCards(
   return { cards, loading, error };
 }
 
-export function useExpansionsAndTypes() {
+export const useFetchExpansionsAndTypes = () => {
   const [expansions, setExpansions] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchExpansions = async () => {
-      try {
-        const response = await fetch(`${API_URL}/cards/expansions`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setExpansions(data);
-      } catch (error) {
-        console.error("Error fetching expansions:", error);
-      }
+    const fetchData = async () => {
+      const [expansionsResponse, typesResponse] = await Promise.all([
+        fetch(`${API_URL}/cards/expansions`),
+        fetch(`${API_URL}/cards/types`),
+      ]);
+      setExpansions(await expansionsResponse.json());
+      setTypes(await typesResponse.json());
     };
 
-    const fetchTypes = async () => {
-      try {
-        const response = await fetch(`${API_URL}/cards/types`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setTypes(data);
-      } catch (error) {
-        console.error("Error fetching types:", error);
-      }
-    };
-
-    fetchExpansions();
-    fetchTypes();
+    fetchData();
   }, []);
 
   return { expansions, types };
-}
+};
+
+export const useFetchCards = (
+  nameFilter: string,
+  expansionFilter: string,
+  typeFilter: string
+) => {
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/cards`);
+        const data = await response.json();
+        setCards(data);
+      } catch (error) {
+        setError("Failed to fetch cards.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCards();
+  }, [nameFilter, expansionFilter, typeFilter]);
+
+  return { cards, loading, error };
+};

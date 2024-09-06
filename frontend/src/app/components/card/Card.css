@@ -1,14 +1,5 @@
 .card {
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    padding: 2rem;
-    position: relative;
+    @apply w-72 flex flex-col justify-center items-center rounded-lg border border-gray-300 p-8 relative;
 
 
     .name {
@@ -26,6 +17,7 @@
 
     strong {
         font-weight: 500;
+        display: inline-block;
     }
 
 

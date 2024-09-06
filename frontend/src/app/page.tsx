@@ -1,7 +1,8 @@
 import HomeComponent from './components/home/Home';
+import { API_URL } from './config';
 
 export default async function Home() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cards`);
+  const res = await fetch(`${API_URL}/cards`);
   const initialCards = await res.json();
 
   return (
