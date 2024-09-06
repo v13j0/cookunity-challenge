@@ -1,35 +1,27 @@
 'use client';
-
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Card from '../../components/card/Card';
-
+import { Card as CardTypes } from '../../types/Card';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
-interface Card {
-    id: number;
-    name: string;
-    type: string;
-    hp: number;
-    attack: number;
-    thumb: string;
-    weaknesses: string[];
-    resistances: string[];
-    expansion: string;
-    rarity: string;
-}
 
 const CardDetail: React.FC = () => {
     const params = useParams();
-    const [card, setCard] = useState<Card | null>(null);
-    const [allCards, setAllCards] = useState<Card[]>([]);
+
+    const { id } = params;
+    const [card, setCard] = useState<CardTypes | null>(null);
+    const [allCards, setAllCards] = useState<CardTypes[]>([]);
     const [opponentId, setOpponentId] = useState<string>('');
     const [battleResult, setBattleResult] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!id) return;
         const fetchCard = async () => {
+
             console.log('Frontend: Fetching card with ID:', params.id);
             try {
                 const response = await fetch(`${API_URL}/cards/${params.id}`);
@@ -72,7 +64,7 @@ const CardDetail: React.FC = () => {
 
         fetchCard();
         fetchAllCards();
-    }, [params.id]);
+    }, [id]);
 
     const handleBattle = async () => {
         if (!card || !opponentId) {

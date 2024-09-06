@@ -1,7 +1,14 @@
-import dynamic from 'next/dynamic';
+import HomeComponent from './components/home/Home';
 
-const HomeComponent = dynamic(() => import('../app/components/home/Home'), { ssr: false });
+export default async function Home() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cards`);
+  const initialCards = await res.json();
 
-export default function Home() {
-  return <HomeComponent />;
+  return (
+    <HomeComponent
+      initialCards={initialCards}
+      initialLoading={false}
+      initialError={null}
+    />
+  );
 }
