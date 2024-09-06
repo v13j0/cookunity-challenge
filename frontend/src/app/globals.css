@@ -26,6 +26,11 @@ h1 {
     text-wrap: balance;
     max-width: 100%;
     width: fit-content;
+    font-size: 1.1rem;
+  }
+
+  p:last-of-type {
+    font-weight: 500;
   }
 }
 

@@ -97,10 +97,6 @@ const CardDetail: React.FC = () => {
         return <div className="text-red-500">{error}</div>;
     }
 
-    if (!card) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className="container mx-auto p-4 flex flex-col items-center">
             <Link href="/" className="text-blue-500 hover:underline mb-4 block">
@@ -115,7 +111,7 @@ const CardDetail: React.FC = () => {
                         className="p-2 border rounded mr-4"
                     >
                         <option value="">Select an opponent</option>
-                        {allCards.filter(c => c.id !== card.id).map((c) => (
+                        {allCards.filter(c => c.id !== card?.id).map((c) => (
                             <option key={c.id} value={c.id}>
                                 {c.name}
                             </option>
@@ -127,11 +123,13 @@ const CardDetail: React.FC = () => {
                     >
                         Battle!
                     </button>
-                    <div className='battle-result'>
-                        {battleResult && <p className="mt-4">{battleResult}</p>}
+                    <div className='battle-result lg:text-left text-center'>
+                        {battleResult && battleResult.split('.').map((line, index) => (
+                            <p key={index} className="mt-4">{line.trim()}</p>
+                        ))}
                     </div>
                 </div>
-                <Card {...card} />
+                {!card ? <div className='card'>Loading...</div> : <Card {...card} />}
             </div>
         </div>
     );
