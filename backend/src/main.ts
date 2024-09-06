@@ -1,10 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  dotenv.config(); // Load environment variables
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
+
+  // Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('API description for the application')
+    .setVersion('1.0')
+    .addTag('cards') // Add tags as needed
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document); // Set up Swagger UI at /api/docs
 
   const allowedOrigins = [
     'https://cookunity-challenge-frontend.vercel.app',
