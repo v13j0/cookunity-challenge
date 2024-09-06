@@ -30,6 +30,7 @@ export class CardsService {
     }
   }
 
+  // Fetch all cards with optional filters
   async findAll(
     filters: { name?: string; expansion?: string; type?: string },
     page: number,
@@ -56,30 +57,28 @@ export class CardsService {
       );
     }
   }
-
+  // Fetch a card by its ID
   async findOne(id: number): Promise<Card> {
     try {
-      const card = await this.prisma.card.findUnique({
-        where: { id },
-      });
-
+      const card = await this.prisma.card.findUnique({ where: { id } });
       if (!card) {
         throw new NotFoundException(`Card with ID ${id} not found`);
       }
-
       return card;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      const err = error as Error;
-      this.logger.error(`Error finding card: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to fetch card: ${err.message}`,
-      );
+      this.handleError(error); // Consistent error handling
     }
   }
 
+  private handleError(error: Error) {
+    const err = error as Error;
+    this.logger.error(`Error: ${err.message}`, err.stack);
+    throw new InternalServerErrorException(
+      `Failed to process request: ${err.message}`,
+    );
+  }
+
+  // Update a card's details
   async update(id: number, updateCardDto: UpdateCardDto): Promise<Card> {
     try {
       const card = await this.prisma.card.update({
@@ -97,6 +96,7 @@ export class CardsService {
     }
   }
 
+  // Remove a card from the database
   async remove(id: number): Promise<Card> {
     try {
       const card = await this.prisma.card.delete({

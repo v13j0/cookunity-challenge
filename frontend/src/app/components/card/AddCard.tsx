@@ -2,21 +2,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '../../config';
-import { useCardCache } from '../../context/CardCacheContext'; // Adjusted import
+import { useCardCache } from '../../context/CardCacheContext';
+import { Card as CardType } from '../../types/Card';
 
 const AddCard: React.FC = () => {
-    const { setCard } = useCardCache(); // Access setCard from CardCacheContext
-    const [cardData, setCardData] = useState<{
-        name: string;
-        type: string;
-        hp: number;
-        attack: number;
-        thumb: string;
-        weaknesses: string[];
-        resistances: string[];
-        expansion: string;
-        rarity: string;
-    }>({
+    const { setCard } = useCardCache();
+    // Placeholder for card data is used for quick testing and development purposes.
+    const [cardData, setCardData] = useState<CardType>({
+        id: 0,
         name: "Pikachu",
         type: "Electric",
         hp: 60,

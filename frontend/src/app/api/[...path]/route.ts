@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(fullUrl, {
       headers: {
-        "X-Forwarded-Host": "localhost:3000",
-        "X-Forwarded-Proto": "http",
+        "X-Forwarded-Host": request.headers.get("host") || "localhost:3000",
+        "X-Forwarded-Proto": request.headers.get("x-forwarded-proto") || "http",
       },
     });
 

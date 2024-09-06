@@ -49,6 +49,7 @@ The application is built using Next.js for the frontend and NestJS for the backe
 
    ```
    DATABASE_URL="postgresql://username:password@localhost:5432/pokemon_cards?schema=public"
+   API_URL=localhost:3001
    ```
 
    Replace `username`, `password`, and `pokemon_cards` with your PostgreSQL credentials and desired database name.
@@ -96,11 +97,23 @@ The application is built using Next.js for the frontend and NestJS for the backe
 
 ### Cards
 
-- **GET /cards**: Retrieve all cards.
-- **GET /cards/:id**: Retrieve a specific card by ID.
-- **POST /cards**: Add a new card.
-- **PUT /cards/:id**: Update an existing card by ID.
-- **DELETE /cards/:id**: Delete a card by ID.
+- **GET /cards/:id**
+  - **Request**: `GET /cards/1`
+  - **Response**:
+    ```json
+    {
+      "id": 1,
+      "name": "Pikachu",
+      "type": "Electric",
+      "hp": 60,
+      "attack": 50,
+      "thumb": "https://example.com/pikachu.png",
+      "weaknesses": ["Ground"],
+      "resistances": ["Electric"],
+      "expansion": "Base Set",
+      "rarity": "Rare"
+    }
+    ```
 
 ### Battle Simulation
 
@@ -133,8 +146,6 @@ Backend is hosted on Vercel as well, leveraging serverless functions for NestJS 
    - Vercel CLI is used to deploy the application
    - Vercel automatically creates serverless functions from the built NestJS app
 
-5. **Scalability**: This setup allows the backend to automatically scale based on incoming requests, optimizing resource usage and cost.
-
-6. **Cold Starts**: While serverless functions may experience cold starts, Vercel's infrastructure minimizes this impact for improved performance.
-
 This serverless deployment on Vercel ensures that our NestJS backend is highly available, scalable, and cost-efficient, complementing our frontend deployment.
+
+## Assumptions made

@@ -1,4 +1,4 @@
-'use client'; // This component will be a client component
+'use client';
 
 import React, { useState } from 'react';
 import Card from './Card';
@@ -16,12 +16,17 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
     const [expansionFilter, setExpansionFilter] = useState('');
     const [typeFilter, setTypeFilter] = useState('');
 
-    const filteredCards = initialCards.filter(card => {
-        const matchesName = card.name.toLowerCase().includes(nameFilter.toLowerCase());
-        const matchesExpansion = expansionFilter ? card.expansion === expansionFilter : true;
-        const matchesType = typeFilter ? card.type === typeFilter : true;
-        return matchesName && matchesExpansion && matchesType;
-    });
+    // Function to filter cards based on provided filters
+    const filterCards = (cards: CardType[], filters: { name: string; expansion: string; type: string }) => {
+        return cards.filter(card => {
+            const matchesName = card.name.toLowerCase().includes(filters.name.toLowerCase());
+            const matchesExpansion = filters.expansion ? card.expansion === filters.expansion : true;
+            const matchesType = filters.type ? card.type === filters.type : true;
+            return matchesName && matchesExpansion && matchesType;
+        });
+    };
+
+    const filteredCards = filterCards(initialCards, { name: '', expansion: '', type: '' });
 
     return (
         <div className="container mx-auto p-4 flex flex-col items-center">

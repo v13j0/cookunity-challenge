@@ -25,7 +25,26 @@ describe("Card Component", () => {
   test("renders error message on fetch failure", async () => {
     // Mock fetch to simulate error
     global.fetch = jest.fn(() => Promise.reject("API is down"));
-    render(<HomeComponent initialCards={[]} initialLoading={false} initialError={null} />);
+    render(<HomeComponent initialCards={[]} initialError={null} />);
     expect(await screen.findByText("Failed to fetch cards.")).toBeInTheDocument();
+  });
+  test("renders card with correct properties", () => {
+    const mockCardProps = {
+      id: 1,
+      name: "Pikachu",
+      type: "electric",
+      hp: 60,
+      attack: 50,
+      thumb: "pikachu.jpg",
+      weaknesses: ["ground"],
+      resistances: [],
+      expansion: "Base Set",
+      rarity: "Common"
+    };
+
+    render(<Card {...mockCardProps} />);
+    expect(screen.getByText("Pikachu")).toBeInTheDocument();
+    expect(screen.getByText("HP 60")).toBeInTheDocument();
+    expect(screen.getByAltText("Pikachu")).toHaveAttribute('src', mockCardProps.thumb);
   });
 });

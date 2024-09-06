@@ -3,9 +3,7 @@ import AddCard from "../components/card/AddCard"; // Adjust the import path as n
 
 const AddCardPage: React.FC = () => {
     return (
-        <div>
-            <AddCard />
-        </div>
+        <AddCard />
     );
 };
 

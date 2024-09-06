@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CardsService } from './cards.service';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 describe('CardsService', () => {
   let service: CardsService;
@@ -30,5 +34,17 @@ describe('CardsService', () => {
     });
     expect(card).toBeDefined();
     expect(card.name).toBe('Pikachu');
+  });
+  it('should throw an error if card not found', async () => {
+    await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+  });
+
+  it('should handle database unreachable error', async () => {
+    jest.spyOn(service['prisma'].card, 'findUnique').mockImplementation(() => {
+      throw new Error('Database unreachable');
+    });
+    await expect(service.findOne(1)).rejects.toThrow(
+      InternalServerErrorException,
+    );
   });
 });

@@ -4,14 +4,14 @@ export class WeaknessesAndResistances {
   @ApiProperty({
     type: [String],
     example: ['Ground'],
-    description: 'The weaknesses of the Pokémon',
+    description: 'List of weaknesses that increase damage taken by the Pokémon',
   })
   weaknesses: string[];
 
   @ApiProperty({
     type: [String],
     example: ['Electric'],
-    description: 'The resistances of the Pokémon',
+    description: 'List of resistances that reduce damage taken by the Pokémon',
   })
   resistances: string[];
 }

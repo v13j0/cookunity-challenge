@@ -172,6 +172,7 @@ export class CardsController {
     description: 'Return the battle result.',
     type: BattleResult,
   })
+  // Simulates a battle between two cards based on their IDs and returns the result.
   async simulateBattle(
     @Param('attackerId', ParseIntPipe) attackerId: number,
     @Param('defenderId', ParseIntPipe) defenderId: number,
