@@ -148,4 +148,28 @@ Backend is hosted on Vercel as well, leveraging serverless functions for NestJS 
 
 This serverless deployment on Vercel ensures that our NestJS backend is highly available, scalable, and cost-efficient, complementing our frontend deployment.
 
-## Assumptions made
+## Notes
+
+During the development of this application, several assumptions were made:
+
+1. **User Authentication**: The current version does not include user authentication. It's assumed that all users have equal access to all features.
+
+2. **Data Persistence**: The application assumes that the database (likely PostgreSQL with Prisma ORM) is always available and functioning correctly.
+
+3. **Card Data**: It's assumed that all Pokemon cards follow a consistent structure with the fields specified in the API responses (id, name, type, hp, attack, etc.).
+
+4. **Battle Mechanics**: The battle simulation is likely simplified and may not account for all complexities found in the actual Pokemon Trading Card Game.
+
+5. **API Rate Limiting**: There's an assumption that users won't abuse the API with excessive requests. No rate limiting is explicitly mentioned.
+
+6. **Browser Compatibility**: The frontend is assumed to work on modern web browsers. Compatibility with older browsers may not be guaranteed.
+
+7. **Network Conditions**: The application assumes users have a stable internet connection for fetching data and images.
+
+8. **Scalability**: While using serverless functions, there's an assumption that the current architecture can handle the expected user load.
+
+9. **Data Integrity**: It's assumed that users input valid data when adding new cards, though some server-side validation is likely in place.
+
+10. **Real-time Updates**: The application may not support real-time updates. Users might need to refresh to see changes made by others.
+
+11. **Localization**: The application is assumed to be in English, without built-in support for multiple languages.

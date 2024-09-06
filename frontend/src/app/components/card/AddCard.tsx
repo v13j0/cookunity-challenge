@@ -7,10 +7,11 @@ import { Card as CardType } from '../../types/Card';
 
 const AddCard: React.FC = () => {
     const { setCard } = useCardCache();
+    const randomId = Math.floor(Math.random() * 100);
     // Placeholder for card data is used for quick testing and development purposes.
     const [cardData, setCardData] = useState<CardType>({
-        id: 0,
-        name: "Pikachu",
+        id: randomId,
+        name: "Random",
         type: "Electric",
         hp: 60,
         attack: 50,
@@ -38,6 +39,7 @@ const AddCard: React.FC = () => {
             const newCard = await response.json();
             setCard(newCard.id, newCard); // Update the cache with the new card
             router.push('/'); // Navigate to the home page
+
         } catch (error) {
             console.error("Error adding card:", error);
         }
