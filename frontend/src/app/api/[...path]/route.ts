@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { API_URL } from "../../config";
 
 export async function GET(request: NextRequest) {
   const { pathname, search } = new URL(request.url);
   const path = pathname.replace(/^\/api/, "");
-  const fullUrl = `http://localhost:3001${path}${search}`;
+  const fullUrl = `${API_URL}${path}${search}`;
 
   console.log("Next.js API Route: Proxying request to:", fullUrl);
 
@@ -30,5 +31,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-// Similar changes for POST and other methods...
