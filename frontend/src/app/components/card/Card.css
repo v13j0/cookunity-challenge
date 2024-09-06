@@ -6,9 +6,10 @@
     align-content: center;
     align-items: center;
     border-radius: 8px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
     padding: 2rem;
     position: relative;
+
 
     .name {
         font-size: 1.5rem;
