@@ -57,7 +57,6 @@ export function useCards(
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            // Add any other headers your API might need
           },
         });
 

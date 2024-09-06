@@ -31,10 +31,10 @@ const HomeComponent: React.FC = () => {
   const { expansions, types } = useExpansionsAndTypes();
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Pokémon App</h1>
+    <div className="container mx-auto p-4 flex flex-col items-center">
+      <h1 className="text-3xl mb-4">Pokémon App</h1>
 
-      <div className="mb-4 flex space-x-4">
+      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-4">
         <input
           type="text"
           placeholder="Filter by name"

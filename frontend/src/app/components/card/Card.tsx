@@ -1,6 +1,8 @@
 import React from 'react';
 import './Card.css';
 import Image from 'next/image';
+
+
 interface CardProps {
     id: number;
     name: string;
@@ -19,15 +21,15 @@ const Card: React.FC<CardProps> = ({ name, type, hp, attack, thumb, weaknesses, 
         <div className="card">
             <div className="flex flex-row justify-between mb-4 w-full">
                 <h2 className="name">{name}</h2>
-                <p className="hp">HP {hp}</p>
+                <p className="honk-400 hp">HP {hp}</p>
             </div>
-            <Image className="thumb" src={`/images/${thumb}`} alt={name} width={300} height={300} />
+            <Image className="thumb" src={`/images/${thumb}`} alt={name} width={200} height={200} />
             <div className="abilities">
-                <div className='flex flex-row justify-between'>
+                <div className='flex flex-col'>
                     <p><strong>Type: </strong>{type}</p>
                     <p><strong>Attack: </strong>{attack}</p>
                 </div>
-                <div className='flex flex-row justify-between'>
+                <div className='flex flex-col'>
                     <p><strong>Weaknesses: </strong>
                         {weaknesses?.map((weakness, index) => (
                             <span key={index}>{weakness}</span>
@@ -42,11 +44,11 @@ const Card: React.FC<CardProps> = ({ name, type, hp, attack, thumb, weaknesses, 
                     </p>
                 </div>
             </div>
-            <div className="footer">
-                <div>Expansion: {expansion}</div>
-                <div>Rarity: {rarity}</div>
+            <div className="footer flex flex-col w-full">
+                <p>Expansion: {expansion}</p>
+                <p>Rarity: {rarity}</p>
             </div>
-        </div>
+        </div >
     );
 };
 

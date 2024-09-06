@@ -102,14 +102,14 @@ const CardDetail: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 flex flex-col items-center">
             <Link href="/" className="text-blue-500 hover:underline mb-4 block">
                 &larr; Back to all cards
             </Link>
             <div className='flex'>
                 <Card {...card} />
                 <div className="ml-8">
-                    <h2 className="text-2xl font-bold mb-4">Battle</h2>
+                    <h2 className="text-2xl mb-4">Battle</h2>
                     <select
                         value={opponentId}
                         onChange={(e) => setOpponentId(e.target.value)}
@@ -128,7 +128,9 @@ const CardDetail: React.FC = () => {
                     >
                         Battle!
                     </button>
-                    {battleResult && <p className="mt-4">{battleResult}</p>}
+                    <div className='battle-result'>
+                        {battleResult && <p className="mt-4">{battleResult}</p>}
+                    </div>
                 </div>
             </div>
         </div>

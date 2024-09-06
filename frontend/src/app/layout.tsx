@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
+import { Tomorrow } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const tomorrow = Tomorrow({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Cookunity Challenge",
@@ -16,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className={inter.className}>{children}</body>
-    </html>
+      <body className={tomorrow.className}>{children}</body>
+    </html >
   );
 }
