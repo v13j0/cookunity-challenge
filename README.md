@@ -1,13 +1,7 @@
-# Project Documentation
-
 ## Overview
 
-This project is a card management application that allows users to view, add, and edit cards. The application is built using Next.js for the frontend and NestJS for the backend, with TypeScript for type safety.
-
-## Assumptions
-
-- The application assumes that the user has Node.js and npm installed.
-- The backend requires a database connection, which should be configured in the `.env` file.
+This project is based on the requirements outlined in the [REQUIREMENTS.md](REQUIREMENTS.md) file.
+The application is built using Next.js for the frontend and NestJS for the backend, with TypeScript for type safety.
 
 ## Implemented Solution
 
@@ -16,17 +10,27 @@ This project is a card management application that allows users to view, add, an
 - The backend is implemented using **NestJS** and **TypeScript**.
 - API endpoints are documented using **Swagger**.
 - Libraries used:
-  - `@nestjs/swagger`
-  - `swagger-ui-express`
-  - `prisma`
-  - `nestjs`
-- The backend exposes RESTful API endpoints for managing cards.
+  - `@nestjs/swagger`: For API documentation
+  - `swagger-ui-express`: To serve Swagger UI
+  - `@prisma/client`: ORM for database operations
+  - `@nestjs/common`, `@nestjs/core`: Core NestJS libraries
+  - `class-validator`, `class-transformer`: For DTO validation and transformation
+  - `@nestjs/config`: For environment configuration
+- The backend exposes RESTful API endpoints for managing Pokémon cards, including:
+  - Create, Read, Update, Delete (CRUD) operations
+  - Card battle simulation
+  - Identifying card weaknesses and resistances
 
 ### Frontend
 
 - The frontend is implemented using **Next.js** and **TypeScript**.
 - Uses **Tailwind CSS** for styling.
-- The frontend interacts with the backend API to fetch, add, and edit card data.
+- The frontend interacts with the backend API to fetch and add card data.
+- Implements a card cache context for efficient data management.
+- Features a responsive design for various screen sizes.
+- Includes components for displaying individual cards and a list of cards.
+- Provides forms for adding new cards.
+- Utilizes Next.js routing for navigation between pages.
 
 ## Instructions for Running
 
@@ -35,10 +39,21 @@ This project is a card management application that allows users to view, add, an
 1. **Install dependencies**:
 
    ```bash
+   cd backend
    npm install
    ```
 
 2. **Set up the database**:
+
+   Ensure PostgreSQL is installed and running. Then create a `.env` file in the `backend` directory with the following content:
+
+   ```
+   DATABASE_URL="postgresql://username:password@localhost:5432/pokemon_cards?schema=public"
+   ```
+
+   Replace `username`, `password`, and `pokemon_cards` with your PostgreSQL credentials and desired database name.
+
+   Then run:
 
    ```bash
    npx prisma migrate dev
@@ -47,7 +62,7 @@ This project is a card management application that allows users to view, add, an
 3. **Start the server**:
 
    ```bash
-   npm run start
+   npm run start:dev
    ```
 
 4. **Access Swagger documentation** at `http://localhost:3001/api/docs`.
@@ -57,16 +72,25 @@ This project is a card management application that allows users to view, add, an
 1. **Install dependencies**:
 
    ```bash
+   cd frontend
    npm install
    ```
 
-2. **Start the development server**:
+2. **Configure environment**:
+
+   Create a `.env.local` file in the `frontend` directory with:
+
+   ```
+   NEXT_PUBLIC_API_URL=http://localhost:3001
+   ```
+
+3. **Start the development server**:
 
    ```bash
    npm run dev
    ```
 
-3. **Access the application** at `http://localhost:3000`.
+4. **Access the application** at `http://localhost:3000`.
 
 ## API Endpoints
 
@@ -78,59 +102,39 @@ This project is a card management application that allows users to view, add, an
 - **PUT /cards/:id**: Update an existing card by ID.
 - **DELETE /cards/:id**: Delete a card by ID.
 
-### Example Request for Adding a Card
+### Battle Simulation
 
-```json
-POST /cards
-{
-"name": "Card Name",
-"type": "Card Type",
-"hp": 100,
-"attack": 50,
-"thumb": "http://example.com/image.png",
-"weaknesses": ["Fire", "Water"],
-"resistances": ["Grass"],
-"expansion": "Expansion Name",
-"rarity": "Rare"
-}
-```
+- **POST /battle**: Simulate a battle between two cards.
 
-### Example Response
+### Weaknesses and Resistances
 
-```json
-{
-  "id": 1,
-  "name": "Card Name",
-  "type": "Card Type",
-  "hp": 100,
-  "attack": 50,
-  "thumb": "http://example.com/image.png",
-  "weaknesses": ["Fire", "Water"],
-  "resistances": ["Grass"],
-  "expansion": "Expansion Name",
-  "rarity": "Rare"
-}
-```
+- **GET /cards/:id/weaknesses**: Get weaknesses for a specific card.
+- **GET /cards/:id/resistances**: Get resistances for a specific card.
 
-## Additional Notes
+## Production Environment
 
-- Ensure that the `.env` file is correctly configured with the necessary environment variables for both the backend and frontend.
-- The Swagger documentation includes comprehensive details about each endpoint, including request parameters, request bodies, and response types.
-- Authentication for the API endpoints is handled using Bearer tokens, as documented in the Swagger UI.
+The application is deployed and accessible in a production environment. You can access the live version at the following URL:
 
-## Frontend Features
+https://pokemon-card-battle-frontend.vercel.app
 
-- Users can view a list of all cards.
-- Users can add a new card using a form.
-- Users can edit existing cards by selecting them from the list.
-- The application provides a responsive design using Tailwind CSS.
+This deployment is hosted on Vercel, providing a seamless and performant experience for users. The production environment mirrors the functionality of the local development setup, allowing you to interact with the application, add Pokemon cards, and simulate battles in real-time.
 
-## Backend Features
+Backend is hosted on Vercel as well, leveraging serverless functions for NestJS applications:
 
-- The backend is structured using NestJS modules, controllers, and services.
-- The application uses Prisma for database interactions.
-- Swagger is used for API documentation, making it easy to test endpoints.
+1. **Serverless NestJS on Vercel**: NestJS backends can be deployed as serverless functions on Vercel, allowing for scalable and cost-effective hosting.
 
-## Conclusion
+2. **Adaptation for Serverless**: The NestJS application is adapted to work with serverless architecture by using a serverless-express wrapper.
 
-This documentation provides an overview of the card management application, including setup instructions, API details, and features. For any issues or further questions, please refer to the code comments or reach out to the development team.
+3. **Configuration**: A `vercel.json` file is created in the project root to specify build settings and routes for the serverless functions.
+
+4. **Deployment Process**:
+
+   - The NestJS app is built using `npm run build`
+   - Vercel CLI is used to deploy the application
+   - Vercel automatically creates serverless functions from the built NestJS app
+
+5. **Scalability**: This setup allows the backend to automatically scale based on incoming requests, optimizing resource usage and cost.
+
+6. **Cold Starts**: While serverless functions may experience cold starts, Vercel's infrastructure minimizes this impact for improved performance.
+
+This serverless deployment on Vercel ensures that our NestJS backend is highly available, scalable, and cost-efficient, complementing our frontend deployment.
