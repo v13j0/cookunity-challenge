@@ -18,6 +18,14 @@ interface Card {
   rarity: string;
 }
 
+const CardSkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="card animate-pulse h-4 bg-gray-100 rounded  mb-2">Loading...</div>
+    <div className="card animate-pulse h-4 bg-gray-100 rounded mb-2">Loading...</div>
+    <div className="card animate-pulse h-4 bg-gray-100 rounded w-full">Loading...</div>
+  </div>
+);
+
 const HomeComponent: React.FC = () => {
   useEffect(() => {
     console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL);
@@ -70,15 +78,17 @@ const HomeComponent: React.FC = () => {
 
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cards.map((card) => (
-          <Link key={card.id} href={`/card/${card.id}`}>
-            <div className="cursor-pointer">
-              <Card {...card} />
-            </div>
-          </Link>
-        ))}
-      </div>
+      {loading ? <CardSkeleton /> :
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {cards.map((card) => (
+            <Link key={card.id} href={`/card/${card.id}`}>
+              <div className="cursor-pointer">
+                <Card {...card} />
+              </div>
+            </Link>
+          ))}
+        </div>
+      }
     </div>
   );
 };
