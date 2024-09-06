@@ -2,13 +2,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '../../config';
-import { Card as CardType } from '@/app/types/Card';
+import { useCardCache } from '../../context/CardCacheContext'; // Adjusted import
 
-interface AddCardProps {
-    setCards: React.Dispatch<React.SetStateAction<CardType[]>>;
-}
-
-const AddCard: React.FC<AddCardProps> = ({ setCards }) => {
+const AddCard: React.FC = () => {
+    const { setCard } = useCardCache(); // Access setCard from CardCacheContext
     const [cardData, setCardData] = useState<{
         name: string;
         type: string;
@@ -46,8 +43,7 @@ const AddCard: React.FC<AddCardProps> = ({ setCards }) => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const newCard = await response.json();
-
-
+            setCard(newCard.id, newCard); // Update the cache with the new card
             router.push('/'); // Navigate to the home page
         } catch (error) {
             console.error("Error adding card:", error);
