@@ -1,70 +1,136 @@
-## Backend
+# Project Documentation
 
-### Scope
+## Overview
 
-Develop a RESTful API centered around Pokémon Cards that can be integrated with a
-frontend or application, featuring the following functionalities:
+This project is a card management application that allows users to view, add, and edit cards. The application is built using Next.js for the frontend and NestJS for the backend, with TypeScript for type safety.
 
-- Creation of a new card.
-- Updating an existing card.
-- Retrieval of a specific card.
-- Retrieval of all cards.
-- Deletion of a card.
-- Card Battle Simulation: Given a selected card, we aim to determine whether it can defeat another card in a single attack. This assessment considers factors such as weaknesses and resistances based on types. For instance, if Feraligatr (Water) attacks Charizard, it might not initially succeed, but based on Charizard's weakness (Water) could result in a 2x damage multiplier, granting victory to Feraligatr. Conversely, consider Scizor (Steel) facing Pikachu; here, Scizor's attack might only deal 40 points of damage based on the Pikachu's resistance (20 less for Steel), rendering it unsuccessful in the battle.
+## Assumptions
 
-- Identify Card Weaknesses and Resistances: Given a selected card, retrieve a list detailing which cards it is weak against and which it is resistant to. For example choosing Pikachu would reveal Onix as a weakness and Scizor as a resistance.
+- The application assumes that the user has Node.js and npm installed.
+- The backend requires a database connection, which should be configured in the `.env` file.
 
-![alt text](image-1.png)
-![alt text](image-2.png)
+## Implemented Solution
 
-| Card       | Attack To | Original Attack | Attack Modified | Succeed |
-| ---------- | --------- | --------------- | --------------- | ------- | ----- |
-| Feraligatr | Charizard | (180HP)         | 160             | 320     | True  |
-| Onix       | Pikachu   | (60HP)          | 40              | 80      | True  |
-| Pikachu    | Onix      | (90HP)          | 20              | -       | False |
-| Sneasel    | Scizor    | (120HP)         | 20              | -       | False |
-| Scizor     | Pikachu   | (60HP)          | 60              | 40      | False |
-| Onix       | Treecko   | (40HP)          | 40              | -       | True  |
+### Backend
 
-### Notes
+- The backend is implemented using **NestJS** and **TypeScript**.
+- API endpoints are documented using **Swagger**.
+- Libraries used:
+  - `@nestjs/swagger`
+  - `swagger-ui-express`
+  - `prisma`
+  - `nestjs`
+- The backend exposes RESTful API endpoints for managing cards.
 
-- The solution must be implemented in Typescript. Feel free to use any framework. (e.g., NestJS)
-- Postgres must be used as the database engine.
-- Feel free to make any necessary assumptions regarding required fields, data structure, and validations.
-- Data persistence is required.
-- The solution should be hosted in a repository.
-- Upon completion, a document outlining the assumptions made, the implemented solution, and instructions for running it should be submitted.
-- Documentation of the API endpoints (e.g., Swagger) should be provided.
+### Frontend
 
-### Bonus
+- The frontend is implemented using **Next.js** and **TypeScript**.
+- Uses **Tailwind CSS** for styling.
+- The frontend interacts with the backend API to fetch, add, and edit card data.
 
-- Authentication
-- Filtering
-- Pagination
-- Unit testing
-- Deployment of the API to a cloud service (AWS, Azure, Google Cloud, etc.)
-- Utilization of AWS services (API Gateway, Lambda, EC2, ECS, EKS, S3, etc.)
+## Instructions for Running
 
-## Frontend
+### Backend
 
-### Scope
+1. **Install dependencies**:
 
-Create a view capable of displaying all available cards, alongside another view dedicated to showcasing a single selected card, with an option to engage in battles against other cards.
+   ```bash
+   npm install
+   ```
 
-![mockups](image.png)
+2. **Set up the database**:
 
-### Notes
+   ```bash
+   npx prisma migrate dev
+   ```
 
-- The solution must be implemented in React with Typescript. Feel free to use any framework if you want. (e.g., Next.js)
-- Feel free to make any necessary assumptions regarding required fields, data structure, and validations.
-- Feel free to use any library or css preprocessor. (e.g., Styled Components, Sass)
-- The solution should be hosted in a repository
-- Upon completion, a document outlining the assumptions made, the implemented solution, and instructions for running it
+3. **Start the server**:
 
-### Bonus
+   ```bash
+   npm run start
+   ```
 
-- Authentication
-- Filtering
-- Pagination
-- Unit testing or e2e tests
-- Deployment of the frontend
+4. **Access Swagger documentation** at `http://localhost:3001/api/docs`.
+
+### Frontend
+
+1. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+2. **Start the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Access the application** at `http://localhost:3000`.
+
+## API Endpoints
+
+### Cards
+
+- **GET /cards**: Retrieve all cards.
+- **GET /cards/:id**: Retrieve a specific card by ID.
+- **POST /cards**: Add a new card.
+- **PUT /cards/:id**: Update an existing card by ID.
+- **DELETE /cards/:id**: Delete a card by ID.
+
+### Example Request for Adding a Card
+
+```json
+POST /cards
+{
+"name": "Card Name",
+"type": "Card Type",
+"hp": 100,
+"attack": 50,
+"thumb": "http://example.com/image.png",
+"weaknesses": ["Fire", "Water"],
+"resistances": ["Grass"],
+"expansion": "Expansion Name",
+"rarity": "Rare"
+}
+```
+
+### Example Response
+
+```json
+{
+  "id": 1,
+  "name": "Card Name",
+  "type": "Card Type",
+  "hp": 100,
+  "attack": 50,
+  "thumb": "http://example.com/image.png",
+  "weaknesses": ["Fire", "Water"],
+  "resistances": ["Grass"],
+  "expansion": "Expansion Name",
+  "rarity": "Rare"
+}
+```
+
+## Additional Notes
+
+- Ensure that the `.env` file is correctly configured with the necessary environment variables for both the backend and frontend.
+- The Swagger documentation includes comprehensive details about each endpoint, including request parameters, request bodies, and response types.
+- Authentication for the API endpoints is handled using Bearer tokens, as documented in the Swagger UI.
+
+## Frontend Features
+
+- Users can view a list of all cards.
+- Users can add a new card using a form.
+- Users can edit existing cards by selecting them from the list.
+- The application provides a responsive design using Tailwind CSS.
+
+## Backend Features
+
+- The backend is structured using NestJS modules, controllers, and services.
+- The application uses Prisma for database interactions.
+- Swagger is used for API documentation, making it easy to test endpoints.
+
+## Conclusion
+
+This documentation provides an overview of the card management application, including setup instructions, API details, and features. For any issues or further questions, please refer to the code comments or reach out to the development team.
