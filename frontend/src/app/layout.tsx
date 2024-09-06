@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Tomorrow } from "next/font/google";
 import { CardCacheProvider } from "./context/CardCacheContext";
+import { Analytics } from '@vercel/analytics/react';
 
 const tomorrow = Tomorrow({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
         <CardCacheProvider>
           {children}
         </CardCacheProvider>
+        <Analytics />
       </body>
     </html >
   );
