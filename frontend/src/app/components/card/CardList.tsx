@@ -26,7 +26,11 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
         });
     };
 
-    const filteredCards = filterCards(initialCards, { name: '', expansion: '', type: '' });
+    const filteredCards = filterCards(initialCards, {
+        name: nameFilter,
+        expansion: expansionFilter,
+        type: typeFilter
+    });
 
     return (
         <div className="container mx-auto p-4 flex flex-col items-center">

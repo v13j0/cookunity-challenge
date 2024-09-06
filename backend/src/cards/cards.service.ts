@@ -38,12 +38,15 @@ export class CardsService {
   ): Promise<Card[]> {
     try {
       const { name, expansion, type } = filters;
+      const hasConditions = name || expansion || type;
       const cards = await this.prisma.card.findMany({
-        where: {
-          name: name ? { contains: name, mode: 'insensitive' } : undefined,
-          expansion: expansion || undefined,
-          type: type || undefined,
-        },
+        ...(hasConditions && {
+          where: {
+            ...(name && { contains: name, mode: 'insensitive' }),
+            ...(expansion && { expansion }),
+            ...(type && { type }),
+          },
+        }),
         skip: (page - 1) * limit,
         take: limit,
       });
