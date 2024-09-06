@@ -1,61 +1,17 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Card from '../../components/card/Card';
-import { useParams } from 'next/navigation';
+import BattleComponent from '../../components/battle/BattleComponent'; // Import the new BattleComponent
 import { Card as CardTypes } from '../../types/Card';
-import { useFetchCards, useFetchExpansionsAndTypes } from '../../hooks/';
 import { API_URL } from '../../config';
 
+interface CardDetailProps {
+    card: CardTypes | null;
+    error: string | null;
+    allCards: CardTypes[];
+}
 
-const CardDetail: React.FC = () => {
-    const params = useParams();
-    const { id } = params;
-    const [card, setCard] = useState<CardTypes | null>(null);
-    const [opponentId, setOpponentId] = useState<string>('');
-    const [battleResult, setBattleResult] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const { cards: allCards } = useFetchCards('', '', '');
-    const { expansions, types } = useFetchExpansionsAndTypes();
-
-    useEffect(() => {
-        if (!id) return;
-        fetchCard(id as string);
-    }, [id]);
-
-    const fetchCard = async (cardId: string) => {
-        try {
-            const response = await fetch(`${API_URL}/cards/${cardId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setCard(data);
-            setError(null);
-        } catch (error) {
-            setError('Error fetching card. Please try again.');
-            setCard(null);
-        }
-    };
-
-    const handleBattle = async () => {
-        if (!card || !opponentId) {
-            setBattleResult('Please select an opponent');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/cards/battle/${card.id}/${opponentId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-            setBattleResult(result.details);
-        } catch (error) {
-            setBattleResult('Error occurred during battle');
-        }
-    };
-
+const CardDetail: React.FC<CardDetailProps> = ({ card, error, allCards }) => {
     if (error) {
         return <div className="text-red-500">{error}</div>;
     }
@@ -66,36 +22,53 @@ const CardDetail: React.FC = () => {
                 &larr; Back to all cards
             </Link>
             <div className='flex lg:flex-row-reverse flex-col sm:flex-col gap-8'>
-                <div>
-                    <h2 className="text-2xl mb-4">Battle</h2>
-                    <select
-                        value={opponentId}
-                        onChange={(e) => setOpponentId(e.target.value)}
-                        className="p-2 border rounded mr-4"
-                    >
-                        <option value="">Select an opponent</option>
-                        {allCards.filter(c => c.id !== card?.id).map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
-                    <button
-                        onClick={handleBattle}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
-                    >
-                        Battle!
-                    </button>
-                    <div className='battle-result lg:text-left text-center'>
-                        {battleResult && battleResult.split('.').map((line, index) => (
-                            <p key={index} className="mt-4">{line.trim()}</p>
-                        ))}
-                    </div>
-                </div>
+                {card && <BattleComponent card={card} allCards={allCards} />} {/* Use the BattleComponent */}
                 {!card ? <div className='card'>Loading...</div> : <Card {...card} />}
             </div>
         </div>
     );
 };
 
-export default CardDetail;
+// Fetching data directly in the component
+export async function generateStaticParams() {
+    const res = await fetch(`${API_URL}/cards`);
+    const cards = await res.json();
+
+    return cards.map((card: CardTypes) => ({
+        id: card.id.toString(),
+    }));
+}
+
+export async function getCardData(id: string) {
+    const res = await fetch(`${API_URL}/cards/${id}`);
+    if (!res.ok) {
+        throw new Error('Failed to fetch card');
+    }
+    return res.json();
+}
+
+export async function getAllCards() {
+    const res = await fetch(`${API_URL}/cards`);
+    if (!res.ok) {
+        throw new Error('Failed to fetch all cards');
+    }
+    return res.json();
+}
+
+// This function will be called on the server side
+export default async function CardDetailPage({ params }: { params: { id: string } }) {
+    const { id } = params;
+
+    try {
+        const card = await getCardData(id);
+        const allCards = await getAllCards();
+
+        return <CardDetail card={card} error={null} allCards={allCards} />;
+    } catch (error) {
+        if (error instanceof Error) {
+            return <CardDetail card={null} error={error.message} allCards={[]} />;
+        } else {
+            return <CardDetail card={null} error="An unknown error occurred" allCards={[]} />;
+        }
+    }
+}

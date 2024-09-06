@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Tomorrow } from "next/font/google";
+import { CardCacheProvider } from "./context/CardCacheContext";
 
 const tomorrow = Tomorrow({
   subsets: ["latin"],
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className={tomorrow.className}>{children}</body>
+      <body className={tomorrow.className}><CardCacheProvider>
+        {children}
+      </CardCacheProvider>
+      </body>
     </html >
   );
 }
