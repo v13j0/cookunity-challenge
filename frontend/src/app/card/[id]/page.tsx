@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Card from '../../components/card/Card';
-import BattleComponent from '../../components/battle/BattleComponent'; // Import the new BattleComponent
+import BattleComponent from '../../components/battle/BattleComponent';
 import { Card as CardTypes } from '../../types/Card';
 import { API_URL } from '../../config';
 
@@ -22,7 +22,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, error, allCards }) => {
                 &larr; Back to all cards
             </Link>
             <div className='flex lg:flex-row-reverse flex-col sm:flex-col gap-8'>
-                {card && <BattleComponent card={card} allCards={allCards} />} {/* Use the BattleComponent */}
+                {card && <BattleComponent card={card} allCards={allCards} />}
                 {!card ? <div className='card'>Loading...</div> : <Card {...card} />}
             </div>
         </div>
@@ -39,36 +39,29 @@ export async function generateStaticParams() {
     }));
 }
 
-export async function getCardData(id: string) {
-    const res = await fetch(`${API_URL}/cards/${id}`);
-    if (!res.ok) {
-        throw new Error('Failed to fetch card');
-    }
-    return res.json();
-}
-
-export async function getAllCards() {
-    const res = await fetch(`${API_URL}/cards`);
-    if (!res.ok) {
-        throw new Error('Failed to fetch all cards');
-    }
-    return res.json();
-}
-
 // This function will be called on the server side
 export default async function CardDetailPage({ params }: { params: { id: string } }) {
     const { id } = params;
 
-    try {
-        const card = await getCardData(id);
-        const allCards = await getAllCards();
+    let card = null;
+    let allCards = [];
+    let error = null;
 
-        return <CardDetail card={card} error={null} allCards={allCards} />;
-    } catch (error) {
-        if (error instanceof Error) {
-            return <CardDetail card={null} error={error.message} allCards={[]} />;
-        } else {
-            return <CardDetail card={null} error="An unknown error occurred" allCards={[]} />;
+    try {
+        const cardResponse = await fetch(`${API_URL}/cards/${id}`);
+        if (!cardResponse.ok) {
+            throw new Error('Failed to fetch card');
         }
+        card = await cardResponse.json();
+
+        const allCardsResponse = await fetch(`${API_URL}/cards`);
+        if (!allCardsResponse.ok) {
+            throw new Error('Failed to fetch all cards');
+        }
+        allCards = await allCardsResponse.json();
+    } catch (err) {
+        error = (err as Error).message;
     }
+
+    return <CardDetail card={card} error={error} allCards={allCards} />;
 }
