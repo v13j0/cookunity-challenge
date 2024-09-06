@@ -1,70 +1,42 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Card from '../../components/card/Card';
+import { useParams } from 'next/navigation';
 import { Card as CardTypes } from '../../types/Card';
+import { useFetchCards, useFetchExpansionsAndTypes } from '../../hooks/';
 import { API_URL } from '../../config';
 
 
 const CardDetail: React.FC = () => {
     const params = useParams();
-
     const { id } = params;
     const [card, setCard] = useState<CardTypes | null>(null);
-    const [allCards, setAllCards] = useState<CardTypes[]>([]);
     const [opponentId, setOpponentId] = useState<string>('');
     const [battleResult, setBattleResult] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const { cards: allCards } = useFetchCards('', '', '');
+    const { expansions, types } = useFetchExpansionsAndTypes();
 
     useEffect(() => {
         if (!id) return;
-        const fetchCard = async () => {
-
-            console.log('Frontend: Fetching card with ID:', params.id);
-            try {
-                const response = await fetch(`${API_URL}/cards/${params.id}`);
-                console.log('Frontend: Response status:', response.status);
-                console.log('Frontend: Response headers:', response.headers);
-
-                if (response.status === 404) {
-                    console.error('Frontend: Card not found');
-                    setError('Card not found');
-                    setCard(null);
-                    return;
-                }
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                console.log('Frontend: Fetched card:', data);
-                setCard(data);
-                setError(null);
-            } catch (error) {
-                console.error('Frontend: Error fetching card:', error);
-                setError('Error fetching card. Please try again.');
-                setCard(null);
-            }
-        };
-
-        const fetchAllCards = async () => {
-            try {
-                const response = await fetch(`${API_URL}/cards`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setAllCards(data);
-            } catch (error) {
-                console.error('Error fetching all cards:', error);
-                setError('Error fetching all cards. Please try again.');
-            }
-        };
-
-        fetchCard();
-        fetchAllCards();
+        fetchCard(id as string);
     }, [id]);
+
+    const fetchCard = async (cardId: string) => {
+        try {
+            const response = await fetch(`${API_URL}/cards/${cardId}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setCard(data);
+            setError(null);
+        } catch (error) {
+            setError('Error fetching card. Please try again.');
+            setCard(null);
+        }
+    };
 
     const handleBattle = async () => {
         if (!card || !opponentId) {
@@ -80,7 +52,6 @@ const CardDetail: React.FC = () => {
             const result = await response.json();
             setBattleResult(result.details);
         } catch (error) {
-            console.error('Error during battle:', error);
             setBattleResult('Error occurred during battle');
         }
     };
@@ -94,7 +65,7 @@ const CardDetail: React.FC = () => {
             <Link href="/" className="text-blue-500 hover:underline mb-4 block">
                 &larr; Back to all cards
             </Link>
-            <div className='flex lg:flex-row-reverse flex-col sm:flex-col  gap-8'>
+            <div className='flex lg:flex-row-reverse flex-col sm:flex-col gap-8'>
                 <div>
                     <h2 className="text-2xl mb-4">Battle</h2>
                     <select

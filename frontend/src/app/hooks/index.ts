@@ -104,11 +104,11 @@ export const useFetchExpansionsAndTypes = () => {
   return { expansions, types };
 };
 
-export const useFetchCards = (
+export function useFetchCards(
   nameFilter: string,
   expansionFilter: string,
   typeFilter: string
-) => {
+) {
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,12 +116,24 @@ export const useFetchCards = (
   useEffect(() => {
     const fetchCards = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const response = await fetch(`${API_URL}/cards`);
+        const queryParams = new URLSearchParams({
+          ...(nameFilter && { name: nameFilter }),
+          ...(expansionFilter && { expansion: expansionFilter }),
+          ...(typeFilter && { type: typeFilter }),
+        }).toString();
+
+        const url = `${API_URL}/cards?${queryParams}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
         setCards(data);
       } catch (error) {
-        setError("Failed to fetch cards.");
+        setError("Failed to fetch cards. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -131,4 +143,4 @@ export const useFetchCards = (
   }, [nameFilter, expansionFilter, typeFilter]);
 
   return { cards, loading, error };
-};
+}

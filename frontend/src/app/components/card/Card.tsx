@@ -1,22 +1,9 @@
 import React from 'react';
 import './Card.css';
 import Image from 'next/image';
+import { Card as CardType } from '../../types/Card';
 
-
-interface CardProps {
-    id: number;
-    name: string;
-    type: string;
-    hp: number;
-    attack: number;
-    thumb: string;
-    weaknesses?: string[];
-    resistances?: string[];
-    expansion: string;
-    rarity: string;
-}
-
-const Card: React.FC<CardProps> = ({ name, type, hp, attack, thumb, weaknesses, resistances, expansion, rarity }) => {
+const Card: React.FC<CardType> = ({ name, type, hp, attack, thumb, weaknesses, resistances, expansion, rarity }) => {
     return (
         <div className="card shadow-md">
             <div className="flex flex-row justify-between mb-4 w-full">

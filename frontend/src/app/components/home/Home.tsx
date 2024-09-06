@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Card from "../../components/card/Card";
-import { useFetchExpansionsAndTypes, useFetchCards } from "../../hooks/index";
+import { useFetchExpansionsAndTypes, useFetchCards, useDebounce } from "../../hooks/index";
 import { Card as CardType } from "../../types/Card";
 
 interface HomeProps {
@@ -21,15 +21,13 @@ const CardSkeleton = () => (
 );
 
 const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, initialError }) => {
-  useEffect(() => {
-    console.log("API_URL:", process.env.NEXT_PUBLIC_API_URL);
-  }, []);
-
   const [nameFilter, setNameFilter] = useState("");
   const [expansionFilter, setExpansionFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const { expansions, types } = useFetchExpansionsAndTypes();
-  const { cards, loading, error } = useFetchCards(nameFilter, expansionFilter, typeFilter);
+  const debouncedNameFilter = useDebounce(nameFilter, 300);
+  const { cards, loading, error } = useFetchCards(debouncedNameFilter, expansionFilter, typeFilter);
+  const displayedCards = cards.length > 0 ? cards : initialCards;
 
   return (
     <div className="container mx-auto p-4 flex flex-col items-center">
@@ -73,7 +71,7 @@ const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, init
 
       {loading ? <CardSkeleton /> :
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cards.map((card) => (
+          {displayedCards.map((card) => (
             <Link
               key={card.id}
               href={`/card/${card.id}`}
