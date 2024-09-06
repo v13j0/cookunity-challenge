@@ -75,7 +75,6 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
                     </Link>
                 ))
                 }
-                ))}
             </div>
         </div>
     );
