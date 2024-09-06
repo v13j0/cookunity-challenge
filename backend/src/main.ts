@@ -15,7 +15,7 @@ async function bootstrap() {
     .addTag('cards') // Add tags as needed
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document); // Set up Swagger UI at /api/docs
+  SwaggerModule.setup('api/docs', app, document);
 
   const allowedOrigins = [
     'https://cookunity-challenge-frontend.vercel.app',

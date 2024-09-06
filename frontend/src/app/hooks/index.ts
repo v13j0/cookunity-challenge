@@ -1,18 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../config";
-
-interface Card {
-  id: number;
-  name: string;
-  type: string;
-  hp: number;
-  attack: number;
-  thumb: string;
-  weaknesses: string[];
-  resistances: string[];
-  expansion: string;
-  rarity: string;
-}
+import { Card } from "../types/Card";
 
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);

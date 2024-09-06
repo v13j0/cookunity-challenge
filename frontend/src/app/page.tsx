@@ -10,7 +10,7 @@ export default async function Home() {
 
   return (
     <div>
-      <HomeComponent initialCards={initialCards} initialLoading={false} initialError={null} />
+      <HomeComponent initialCards={initialCards} initialError={null} />
     </div>
   );
 }

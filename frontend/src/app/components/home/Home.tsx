@@ -7,11 +7,10 @@ import { Card as CardType } from "../../types/Card";
 
 interface HomeProps {
   initialCards: CardType[];
-  initialLoading: boolean;
   initialError: string | null;
 }
 
-const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialLoading, initialError }) => {
+const HomeComponent: React.FC<HomeProps> = ({ initialCards, initialError }) => {
   const { expansions, types } = useFetchExpansionsAndTypes();
 
   return (
