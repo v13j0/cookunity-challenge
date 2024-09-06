@@ -106,9 +106,9 @@ const CardDetail: React.FC = () => {
             <Link href="/" className="text-blue-500 hover:underline mb-4 block">
                 &larr; Back to all cards
             </Link>
-            <div className='flex'>
+            <div className='flex flex-col md:flex-row sm:flex-col-reverse gap-8'>
                 <Card {...card} />
-                <div className="ml-8">
+                <div>
                     <h2 className="text-2xl mb-4">Battle</h2>
                     <select
                         value={opponentId}
