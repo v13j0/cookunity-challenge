@@ -2,11 +2,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_URL } from '../../config';
-import { useCardCache } from '../../context/CardCacheContext';
 import { Card as CardType } from '../../types/Card';
 
 const AddCard: React.FC = () => {
-    const { setCard } = useCardCache();
     const randomId = Math.floor(Math.random() * 100);
     // Placeholder for card data is used for quick testing and development purposes.
     const [cardData, setCardData] = useState<CardType>({
@@ -29,7 +27,7 @@ const AddCard: React.FC = () => {
         try {
             const response = await fetch(`${API_URL}/cards`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(cardData),
             });
 
@@ -37,14 +35,16 @@ const AddCard: React.FC = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const newCard = await response.json();
-            setCard(newCard.id, newCard); // Update the cache with the new card
-            router.push('/'); // Navigate to the home page
 
+            // Navigate to the home page
+            router.push('/');
+
+            // Refresh the current route and fetch new data from the server
+            router.refresh();
         } catch (error) {
             console.error("Error adding card:", error);
         }
     };
-
     return (
         <div className="flex flex-col justify-center items-center p-6 bg-gray-100">
             <h1>Add a New Card</h1>
