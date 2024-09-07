@@ -17,10 +17,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  const allowedOrigins = [
-    'https://cookunity-challenge-frontend.vercel.app',
-    'http://localhost:3000', // Keep this for local development
-  ];
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : [
+        'https://cookunity-challenge-frontend.vercel.app',
+        'http://localhost:3000',
+      ];
 
   app.enableCors({
     origin: (origin, callback) => {
