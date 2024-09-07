@@ -1,9 +1,8 @@
 ## Overview
 
 This project is based on the requirements outlined in the [REQUIREMENTS.md](REQUIREMENTS.md) file.
-The application is built using Next.js for the frontend and NestJS for the backend, with TypeScript for type safety.
 
-## Implemented Solution
+## Implemented solution
 
 ### Backend
 
@@ -26,10 +25,9 @@ The application is built using Next.js for the frontend and NestJS for the backe
 - The frontend is implemented using **Next.js** and **TypeScript**.
 - Uses **Tailwind CSS** for styling.
 - The frontend interacts with the backend API to fetch and add card data.
-- Implements a card cache context for efficient data management.
 - Features a responsive design for various screen sizes.
 - Includes components for displaying individual cards and a list of cards.
-- Provides forms for adding new cards.
+- Includes a route with a form to add new cards (/add)
 - Utilizes Next.js routing for navigation between pages.
 
 ## Prerequisites
@@ -42,7 +40,7 @@ Before running the project, ensure you have the following versions installed:
 - TypeScript: v5.0.0 or later (included in the project dependencies)
 - NestJS: v10.0.0 or later (included in the project dependencies)
 
-## Instructions for Running
+## Instructions for running locally
 
 ### Backend
 
@@ -140,6 +138,8 @@ Before running the project, ensure you have the following versions installed:
 ### Cards
 
 - **GET /cards/:id**
+
+  - **Description**: Retrieve a specific card by its ID
   - **Request**: `GET /cards/1`
   - **Response**:
     ```json
@@ -157,61 +157,145 @@ Before running the project, ensure you have the following versions installed:
     }
     ```
 
-### Battle Simulation
+- **GET /cards**
 
-- **POST /battle**: Simulate a battle between two cards.
+  - **Description**: Retrieve all cards with optional filtering and pagination
+  - **Request**: `GET /cards?type=Electric&page=1&limit=10`
+  - **Response**:
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Pikachu",
+        "type": "Electric",
+        "hp": 60,
+        "attack": 50,
+        "thumb": "pikachu.png",
+        "weaknesses": ["Ground"],
+        "resistances": ["Electric"],
+        "expansion": "Base Set",
+        "rarity": "Rare"
+      }
+      // ... more cards
+    ]
+    ```
+
+- **POST /cards**
+
+  - **Description**: Create a new card
+  - **Request**:
+    ```json
+    {
+      "name": "Charizard",
+      "type": "Fire",
+      "hp": 120,
+      "attack": 80,
+      "thumb": "charizard.png",
+      "weaknesses": ["Water", "Rock"],
+      "resistances": ["Fire", "Grass"],
+      "expansion": "Base Set",
+      "rarity": "Rare"
+    }
+    ```
+  - **Response**: The created card object
+
+- **PUT /cards/:id**
+
+  - **Description**: Update an existing card
+  - **Request**: `PUT /cards/1`
+    ```json
+    {
+      "hp": 70,
+      "attack": 55
+    }
+    ```
+  - **Response**: The updated card object
+
+- **DELETE /cards/:id**
+
+  - **Description**: Delete a specific card
+  - **Request**: `DELETE /cards/1`
+  - **Response**: A success message or the deleted card object
+
+- **GET /cards/expansions**
+
+  - **Description**: Get all unique expansions
+  - **Request**: `GET /cards/expansions`
+  - **Response**:
+    ```json
+    ["Base Set", "Jungle", "Fossil", "Team Rocket"]
+    ```
+
+- **GET /cards/types**
+  - **Description**: Get all unique card types
+  - **Request**: `GET /cards/types`
+  - **Response**:
+    ```json
+    ["Electric", "Fire", "Water", "Grass", "Psychic", "Fighting"]
+    ```
+
+### Battle simulation
+
+- **POST /battle**
+  - **Description**: Simulate a battle between two cards
+  - **Request**: `POST /battle`
+    ```json
+    {
+      "card1Id": 1,
+      "card2Id": 2
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "winner": "Pikachu",
+      "details": "Pikachu used Thunder Shock and won!"
+    }
+    ```
 
 ### Weaknesses and Resistances
 
-- **GET /cards/:id/weaknesses**: Get weaknesses for a specific card.
-- **GET /cards/:id/resistances**: Get resistances for a specific card.
+- **GET /cards/:id/weaknesses-resistances**
+  - **Description**: Get weaknesses and resistances for a specific card
+  - **Request**: `GET /cards/1/weaknesses-resistances`
+  - **Response**:
+    ```json
+    {
+      "weaknesses": ["Ground"],
+      "resistances": ["Electric"]
+    }
+    ```
 
-## Production Environment
+## Production environment
 
 The application is deployed and accessible in a production environment. You can access the live version at the following URL:
 
 https://pokemon-card-battle-frontend.vercel.app
 
-This deployment is hosted on Vercel, providing a seamless and performant experience for users. The production environment mirrors the functionality of the local development setup, allowing you to interact with the application, add Pokemon cards, and simulate battles in real-time.
+## Development assumptions and considerations
 
-Backend is hosted on Vercel as well, leveraging serverless functions for NestJS applications:
+Given the five-day timeframe, this project prioritizes core functionalities. Here are the key assumptions and decisions made:
 
-1. **Serverless NestJS on Vercel**: NestJS backends can be deployed as serverless functions on Vercel, allowing for scalable and cost-effective hosting.
+1. **Backend Framework**: NestJS was chosen because I didn't have the chance to use it in other projects, and because it is currently being used at CookUnity, I wanted to give it a try.
 
-2. **Adaptation for Serverless**: The NestJS application is adapted to work with serverless architecture by using a serverless-express wrapper.
+2. **Database**: PostgreSQL was used as per the requirements. Prisma ORM was integrated because I was familiar with it.
 
-3. **Configuration**: A `vercel.json` file is created in the project root to specify build settings and routes for the serverless functions.
+3. **API Documentation**: Swagger was implemented as per the requirements.
 
-4. **Deployment Process**:
+4. **Frontend Framework**: Next.js was chosen for its server-side rendering capabilities and built-in routing, but also because I wanted to keep exploring it as I didn't have the chance to work on many Next.js projects in the past.
 
-   - The NestJS app is built using `npm run build`
-   - Vercel CLI is used to deploy the application
-   - Vercel automatically creates serverless functions from the built NestJS app
+5. **Styling**: Tailwind CSS was used for rapid UI development, allowing for a clean and responsive design without writing a lot of custom CSS.
 
-This serverless deployment on Vercel ensures that our NestJS backend is highly available, scalable, and cost-efficient, complementing our frontend deployment.
+6. **State Management**: React's built-in hooks were used for state management given the project's scope.
 
-## Notes
+7. **Card Battle Simulation**: Implemented as a simple comparison of attack values, considering weaknesses and resistances. A more complex battle system could be developed with additional time.
 
-During the development of this application, several assumptions were made:
+8. **Error Handling**: Basic error handling was implemented. In a production environment, more comprehensive error handling and logging would be beneficial.
 
-1. **User Authentication**: The current version does not include user authentication. It's assumed that all users have equal access to all features.
+9. **Testing**: Basic unit tests were set up, but comprehensive test coverage was not prioritized due to time constraints. In a real-world scenario, more extensive testing would be crucial.
 
-2. **Data Persistence**: The application assumes that the database (likely PostgreSQL with Prisma ORM) is always available and functioning correctly.
+10. **Deployment**: In the first instance, I wanted to use AWS services because it was another new thing to learn and to work with, but given the five-day timeframe and several failed attempts, I opted for Vercel because I was already familiar with it.
 
-3. **Card Data**: It's assumed that all Pokemon cards follow a consistent structure with the fields specified in the API responses (id, name, type, hp, attack, etc.).
+11. **Security**: Basic CORS configuration was implemented. In a production environment, more stringent security measures would be necessary.
 
-4. **Battle Mechanics**: The battle simulation is likely simplified and may not account for all complexities found in the actual Pokemon Trading Card Game.
-
-5. **API Rate Limiting**: There's an assumption that users won't abuse the API with excessive requests. No rate limiting is explicitly mentioned.
-
-6. **Browser Compatibility**: The frontend is assumed to work on modern web browsers. Compatibility with older browsers may not be guaranteed.
-
-7. **Network Conditions**: The application assumes users have a stable internet connection for fetching data and images.
-
-8. **Scalability**: While using serverless functions, there's an assumption that the current architecture can handle the expected user load.
-
-9. **Data Integrity**: It's assumed that users input valid data when adding new cards, though some server-side validation is likely in place.
-
-10. **Real-time Updates**: The application may not support real-time updates. Users might need to refresh to see changes made by others.
-
-11. **Localization**: The application is assumed to be in English, without built-in support for multiple languages.
+12. **Data Seeding**: A basic data seeding script was created to populate the database with initial Pokemon cards. There's also a quick way to add cards within the UI under the /add route.
