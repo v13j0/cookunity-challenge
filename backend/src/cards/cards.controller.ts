@@ -19,17 +19,22 @@ import {
   ApiParam,
   ApiProperty,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { CardsService } from './cards.service';
 import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
 
 class BattleResult {
-  @ApiProperty({ example: 'Pikachu', description: 'The winner of the battle' })
+  @ApiProperty({
+    example: 'Pikachu',
+    description: 'The name of the winning Pokémon',
+  })
   winner: string;
 
   @ApiProperty({
-    example: 'Pikachu used Thunder Shock and won!',
-    description: 'Details of the battle',
+    example:
+      "Pikachu used Thunder Shock. It's super effective! Charmander fainted.",
+    description: 'A detailed description of the battle outcome',
   })
   details: string;
 }
@@ -37,30 +42,31 @@ class BattleResult {
 class WeaknessesAndResistances {
   @ApiProperty({
     type: [String],
-    example: ['Ground'],
-    description: 'The weaknesses of the Pokémon',
+    example: ['Ground', 'Rock'],
+    description: 'Types that the Pokémon is weak against',
   })
   weaknesses: string[];
 
   @ApiProperty({
     type: [String],
-    example: ['Electric'],
-    description: 'The resistances of the Pokémon',
+    example: ['Electric', 'Steel'],
+    description: 'Types that the Pokémon is resistant to',
   })
   resistances: string[];
 }
 
-@ApiTags('cards')
+@ApiTags('Pokémon Cards')
 @Controller('cards')
 export class CardsController {
   private readonly logger = new Logger(CardsController.name);
   constructor(private readonly cardsService: CardsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new card' })
+  @ApiOperation({ summary: 'Create a new Pokémon card' })
+  @ApiBody({ type: CreateCardDto })
   @ApiResponse({
     status: 201,
-    description: 'The card has been successfully created.',
+    description: 'The Pokémon card has been successfully created.',
     type: Card,
   })
   async create(@Body() createCardDto: CreateCardDto): Promise<Card> {
@@ -68,10 +74,10 @@ export class CardsController {
   }
 
   @Get('expansions')
-  @ApiOperation({ summary: 'Get all unique expansions' })
+  @ApiOperation({ summary: 'Get all unique Pokémon card expansions' })
   @ApiResponse({
     status: 200,
-    description: 'Return all unique expansions.',
+    description: 'Returns all unique Pokémon card expansions.',
     type: [String],
   })
   async getUniqueExpansions(): Promise<string[]> {
@@ -85,10 +91,10 @@ export class CardsController {
   }
 
   @Get('types')
-  @ApiOperation({ summary: 'Get unique card types' })
+  @ApiOperation({ summary: 'Get unique Pokémon card types' })
   @ApiResponse({
     status: 200,
-    description: 'Return unique card types.',
+    description: 'Returns unique Pokémon card types.',
     type: [String],
   })
   async getUniqueTypes(): Promise<string[]> {
@@ -102,6 +108,43 @@ export class CardsController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all Pokémon cards with optional filters' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    type: String,
+    description: 'Filter by Pokémon name',
+  })
+  @ApiQuery({
+    name: 'expansion',
+    required: false,
+    type: String,
+    description: 'Filter by expansion set',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    type: String,
+    description: 'Filter by Pokémon type',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Number of items per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Returns a list of Pokémon cards based on the provided filters.',
+    type: [Card],
+  })
   async findAll(
     @Query() filters: Record<string, any>,
     @Query('page') page: number = 1,
@@ -121,29 +164,45 @@ export class CardsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a card by ID' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiOperation({ summary: 'Get a Pokémon card by ID' })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the Pokémon card',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Return the card with the specified ID.',
+    description: 'Returns the Pokémon card with the specified ID.',
     type: Card,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pokémon card not found.',
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Card> {
     const card = await this.cardsService.findOne(id);
     if (!card) {
-      throw new NotFoundException(`Card with ID ${id} not found`);
+      throw new NotFoundException(`Pokémon card with ID ${id} not found`);
     }
     return card;
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update a card' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiBody({ description: 'The card data to update', type: Card })
+  @ApiOperation({ summary: 'Update a Pokémon card' })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the Pokémon card to update',
+  })
+  @ApiBody({ type: UpdateCardDto })
   @ApiResponse({
     status: 200,
-    description: 'The updated card.',
+    description: 'The updated Pokémon card.',
     type: Card,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pokémon card not found.',
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -153,26 +212,45 @@ export class CardsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a card' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiOperation({ summary: 'Delete a Pokémon card' })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the Pokémon card to delete',
+  })
   @ApiResponse({
     status: 200,
-    description: 'The card has been successfully deleted.',
+    description: 'The Pokémon card has been successfully deleted.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pokémon card not found.',
   })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.cardsService.remove(id);
   }
 
   @Get('battle/:attackerId/:defenderId')
-  @ApiOperation({ summary: 'Simulate a battle between two cards' })
-  @ApiParam({ name: 'attackerId', type: 'number' })
-  @ApiParam({ name: 'defenderId', type: 'number' })
+  @ApiOperation({ summary: 'Simulate a battle between two Pokémon cards' })
+  @ApiParam({
+    name: 'attackerId',
+    type: 'number',
+    description: 'The ID of the attacking Pokémon card',
+  })
+  @ApiParam({
+    name: 'defenderId',
+    type: 'number',
+    description: 'The ID of the defending Pokémon card',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Return the battle result.',
+    description: 'Returns the battle result.',
     type: BattleResult,
   })
-  // Simulates a battle between two cards based on their IDs and returns the result.
+  @ApiResponse({
+    status: 404,
+    description: 'One or both Pokémon cards not found.',
+  })
   async simulateBattle(
     @Param('attackerId', ParseIntPipe) attackerId: number,
     @Param('defenderId', ParseIntPipe) defenderId: number,
@@ -181,12 +259,22 @@ export class CardsController {
   }
 
   @Get(':id/weaknesses-resistances')
-  @ApiOperation({ summary: 'Get weaknesses and resistances for a card' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiOperation({
+    summary: 'Get weaknesses and resistances for a Pokémon card',
+  })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'The ID of the Pokémon card',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Return the weaknesses and resistances.',
+    description: 'Returns the weaknesses and resistances of the Pokémon card.',
     type: WeaknessesAndResistances,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Pokémon card not found.',
   })
   async getWeaknessesAndResistances(
     @Param('id', ParseIntPipe) id: number,

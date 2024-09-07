@@ -5,8 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   const pokemons = [
     {
-      thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/feraligatr.avif',
+      thumb: 'feraligatr.png',
       name: 'Feraligatr',
       type: 'Water',
       expansion: 'Neo Genesis',
@@ -17,7 +16,7 @@ async function main() {
       resistances: [],
     },
     {
-      thumb: 'https://img.pokemondb.net/sprites/home/normal/2x/avif/onix.avif',
+      thumb: 'onix.png',
       name: 'Onix',
       type: 'Rock/Ground',
       expansion: 'Base Set',
@@ -28,8 +27,7 @@ async function main() {
       resistances: ['Electric'],
     },
     {
-      thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/pikachu.avif',
+      thumb: 'pikachu.png',
       name: 'Pikachu',
       type: 'Electric',
       expansion: 'Base Set',
@@ -40,8 +38,7 @@ async function main() {
       resistances: ['Metal'],
     },
     {
-      thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/sneasel.avif',
+      thumb: 'sneasel.png',
       name: 'Sneasel',
       type: 'Dark/Ice',
       expansion: 'Neo Genesis',
@@ -52,8 +49,7 @@ async function main() {
       resistances: ['Psychic'],
     },
     {
-      thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/scizor.avif',
+      thumb: 'scizor.png',
       name: 'Scizor',
       type: 'Metal/Bug',
       expansion: 'Neo Discovery',
@@ -64,8 +60,7 @@ async function main() {
       resistances: ['Psychic'],
     },
     {
-      thumb:
-        'https://img.pokemondb.net/sprites/home/normal/2x/avif/treecko.avif',
+      thumb: 'treecko.png',
       name: 'Treecko',
       type: 'Grass',
       expansion: 'EX Ruby & Sapphire',

@@ -3,10 +3,12 @@ import {
   Logger,
   NotFoundException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Card, CreateCardDto, UpdateCardDto } from './entities/card.entity';
 import { WeaknessesAndResistances } from './entities/weaknesses-and-resistances.entity';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class CardsService {
@@ -14,6 +16,13 @@ export class CardsService {
 
   constructor(private prisma: PrismaService) {}
 
+  /**
+   * Creates a new card in the database.
+   * @param createCardDto - The data for creating a new card.
+   * @returns The created card.
+   * @throws {BadRequestException} If there's a unique constraint violation.
+   * @throws {InternalServerErrorException} If there's an unexpected error during creation.
+   */
   async create(createCardDto: CreateCardDto): Promise<Card> {
     try {
       const card = await this.prisma.card.create({
@@ -22,15 +31,18 @@ export class CardsService {
       this.logger.log(`Created card: ${JSON.stringify(card)}`);
       return card;
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(`Error creating card: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to create card: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'create card');
     }
   }
 
-  // Fetch all cards with optional filters
+  /**
+   * Fetches all cards with optional filters, pagination, and limit.
+   * @param filters - Optional filters for name, expansion, and type.
+   * @param page - The page number for pagination.
+   * @param limit - The number of items per page.
+   * @returns An array of cards matching the criteria.
+   * @throws {InternalServerErrorException} If there's an unexpected error during fetching.
+   */
   async findAll(
     filters: { name?: string; expansion?: string; type?: string },
     page: number,
@@ -42,7 +54,7 @@ export class CardsService {
       const cards = await this.prisma.card.findMany({
         ...(hasConditions && {
           where: {
-            ...(name && { contains: name, mode: 'insensitive' }),
+            ...(name && { name: { contains: name, mode: 'insensitive' } }),
             ...(expansion && { expansion }),
             ...(type && { type }),
           },
@@ -53,14 +65,17 @@ export class CardsService {
       this.logger.log(`Found ${cards.length} cards`);
       return cards;
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(`Error finding cards: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to fetch cards: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'fetch cards');
     }
   }
-  // Fetch a card by its ID
+
+  /**
+   * Fetches a single card by its ID.
+   * @param id - The ID of the card to fetch.
+   * @returns The card with the specified ID.
+   * @throws {NotFoundException} If the card is not found.
+   * @throws {InternalServerErrorException} If there's an unexpected error during fetching.
+   */
   async findOne(id: number): Promise<Card> {
     try {
       const card = await this.prisma.card.findUnique({ where: { id } });
@@ -69,19 +84,47 @@ export class CardsService {
       }
       return card;
     } catch (error) {
-      this.handleError(error); // Consistent error handling
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      this.handlePrismaError(error, 'fetch card');
     }
   }
 
-  private handleError(error: Error) {
+  /**
+   * Handles Prisma-specific errors and throws appropriate exceptions.
+   * @param error - The error to handle.
+   * @param operation - The operation during which the error occurred.
+   * @throws {BadRequestException} For unique constraint violations.
+   * @throws {NotFoundException} For record not found errors.
+   * @throws {InternalServerErrorException} For all other errors.
+   */
+  private handlePrismaError(error: unknown, operation: string): never {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new BadRequestException(
+          `Unique constraint failed during ${operation}`,
+        );
+      }
+      if (error.code === 'P2025') {
+        throw new NotFoundException(`Record not found during ${operation}`);
+      }
+    }
     const err = error as Error;
-    this.logger.error(`Error: ${err.message}`, err.stack);
+    this.logger.error(`Error during ${operation}: ${err.message}`, err.stack);
     throw new InternalServerErrorException(
-      `Failed to process request: ${err.message}`,
+      `Failed to ${operation}: ${err.message}`,
     );
   }
 
-  // Update a card's details
+  /**
+   * Updates a card's details in the database.
+   * @param id - The ID of the card to update.
+   * @param updateCardDto - The data to update the card with.
+   * @returns The updated card.
+   * @throws {NotFoundException} If the card is not found.
+   * @throws {InternalServerErrorException} If there's an unexpected error during updating.
+   */
   async update(id: number, updateCardDto: UpdateCardDto): Promise<Card> {
     try {
       const card = await this.prisma.card.update({
@@ -91,15 +134,17 @@ export class CardsService {
       this.logger.log(`Updated card: ${JSON.stringify(card)}`);
       return card;
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(`Error updating card: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to update card: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'update card');
     }
   }
 
-  // Remove a card from the database
+  /**
+   * Removes a card from the database.
+   * @param id - The ID of the card to remove.
+   * @returns The deleted card.
+   * @throws {NotFoundException} If the card is not found.
+   * @throws {InternalServerErrorException} If there's an unexpected error during deletion.
+   */
   async remove(id: number): Promise<Card> {
     try {
       const card = await this.prisma.card.delete({
@@ -108,14 +153,15 @@ export class CardsService {
       this.logger.log(`Deleted card: ${JSON.stringify(card)}`);
       return card;
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(`Error deleting card: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to delete card: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'delete card');
     }
   }
 
+  /**
+   * Fetches all unique expansions from the database.
+   * @returns An array of unique expansion names.
+   * @throws {InternalServerErrorException} If there's an unexpected error during fetching.
+   */
   async getUniqueExpansions(): Promise<string[]> {
     try {
       const expansions = await this.prisma.card.findMany({
@@ -124,17 +170,15 @@ export class CardsService {
       });
       return expansions.map((card) => card.expansion);
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(
-        `Error fetching unique expansions: ${err.message}`,
-        err.stack,
-      );
-      throw new InternalServerErrorException(
-        `Failed to fetch unique expansions: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'fetch unique expansions');
     }
   }
 
+  /**
+   * Fetches all unique types from the database.
+   * @returns An array of unique type names.
+   * @throws {InternalServerErrorException} If there's an unexpected error during fetching.
+   */
   async getUniqueTypes(): Promise<string[]> {
     try {
       const types = await this.prisma.card.findMany({
@@ -143,17 +187,17 @@ export class CardsService {
       });
       return types.map((card) => card.type);
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(
-        `Error fetching unique types: ${err.message}`,
-        err.stack,
-      );
-      throw new InternalServerErrorException(
-        `Failed to fetch unique types: ${err.message}`,
-      );
+      this.handlePrismaError(error, 'fetch unique types');
     }
   }
 
+  /**
+   * Retrieves the weaknesses and resistances for a specific card.
+   * @param cardId - The ID of the card to get weaknesses and resistances for.
+   * @returns An object containing arrays of weaknesses and resistances.
+   * @throws {NotFoundException} If the card is not found.
+   * @throws {InternalServerErrorException} If there's an unexpected error during fetching.
+   */
   async getWeaknessesAndResistances(
     cardId: number,
   ): Promise<WeaknessesAndResistances> {
@@ -170,17 +214,21 @@ export class CardsService {
 
       return { weaknesses, resistances };
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(
-        `Error getting weaknesses and resistances: ${err.message}`,
-        err.stack,
-      );
-      throw new InternalServerErrorException(
-        `Failed to get weaknesses and resistances: ${err.message}`,
-      );
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      this.handlePrismaError(error, 'get weaknesses and resistances');
     }
   }
 
+  /**
+   * Simulates a battle between two cards.
+   * @param attackerId - The ID of the attacking card.
+   * @param defenderId - The ID of the defending card.
+   * @returns An object containing the winner's name and battle details.
+   * @throws {NotFoundException} If either card is not found.
+   * @throws {InternalServerErrorException} If there's an unexpected error during simulation.
+   */
   async simulateBattle(
     attackerId: number,
     defenderId: number,
@@ -215,11 +263,10 @@ export class CardsService {
         details,
       };
     } catch (error) {
-      const err = error as Error;
-      this.logger.error(`Error in simulateBattle: ${err.message}`, err.stack);
-      throw new InternalServerErrorException(
-        `Failed to simulate battle: ${err.message}`,
-      );
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      this.handlePrismaError(error, 'simulate battle');
     }
   }
 }

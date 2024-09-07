@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Tomorrow } from "next/font/google";
-import { CardCacheProvider } from "./context/CardCacheContext";
 import { Analytics } from '@vercel/analytics/react';
 
 const tomorrow = Tomorrow({
@@ -22,9 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={tomorrow.className}>
-        <CardCacheProvider>
-          {children}
-        </CardCacheProvider>
+        {children}
         <Analytics />
       </body>
     </html >

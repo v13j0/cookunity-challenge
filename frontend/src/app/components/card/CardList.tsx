@@ -38,6 +38,7 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
 
             <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-4">
                 <input
+                    aria-label="Filter by name"
                     type="text"
                     placeholder="Filter by name"
                     value={nameFilter}
@@ -45,6 +46,7 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
                     className="p-2 border rounded flex-grow"
                 />
                 <select
+                    aria-label="Filter by expansion"
                     value={expansionFilter}
                     onChange={(e) => setExpansionFilter(e.target.value)}
                     className="p-2 border rounded"
@@ -57,6 +59,7 @@ const CardList: React.FC<CardListProps> = ({ initialCards, expansions, types }) 
                     ))}
                 </select>
                 <select
+                    aria-label="Filter by type"
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value)}
                     className="p-2 border rounded"
