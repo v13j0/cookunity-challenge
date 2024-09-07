@@ -40,3 +40,5 @@ next-env.d.ts
 # prisma 
 migrations/
 cookunity-challenge.code-workspace
+
+.vscode/
