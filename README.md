@@ -32,6 +32,16 @@ The application is built using Next.js for the frontend and NestJS for the backe
 - Provides forms for adding new cards.
 - Utilizes Next.js routing for navigation between pages.
 
+## Prerequisites
+
+Before running the project, ensure you have the following versions installed:
+
+- Node.js: v18.0.0 or later
+- npm: v8.0.0 or later
+- React: v18.0.0 or later (included in the project dependencies)
+- TypeScript: v5.0.0 or later (included in the project dependencies)
+- NestJS: v10.0.0 or later (included in the project dependencies)
+
 ## Instructions for Running
 
 ### Backend
@@ -45,12 +55,32 @@ The application is built using Next.js for the frontend and NestJS for the backe
 
 2. **Set up the database**:
 
-   Ensure PostgreSQL is installed and running. Then create a `.env` file in the `backend` directory with the following content:
+   Ensure PostgreSQL is installed and running. If not, follow these steps:
 
+   1. Install PostgreSQL:
+
+      - For Ubuntu/Debian: `sudo apt-get install postgresql`
+      - For macOS with Homebrew: `brew install postgresql`
+      - For Windows: Download and install from https://www.postgresql.org/download/windows/
+
+   2. Start PostgreSQL service:
+
+      - For Ubuntu/Debian: `sudo service postgresql start`
+      - For macOS: `brew services start postgresql`
+      - For Windows: It should start automatically, or use the PostgreSQL GUI tools
+
+   3. Create a new database:
+      - Open a terminal and run: `psql -U postgres`
+      - In the psql prompt, type: `CREATE DATABASE pokemon_cards;`
+      - Exit psql with `\q`
+
+   Create a `.env` file in the `backend` directory by copying the `.env.example` file and updating it with your specific configuration:
+
+   ```bash
+   cp .env.example .env
    ```
-   DATABASE_URL="postgresql://username:password@localhost:5432/pokemon_cards?schema=public"
-   API_URL=localhost:3001
-   ```
+
+   Then, open the `.env` file and fill in the necessary environment variables with your actual values.
 
    Replace `username`, `password`, and `pokemon_cards` with your PostgreSQL credentials and desired database name.
 
@@ -60,13 +90,23 @@ The application is built using Next.js for the frontend and NestJS for the backe
    npx prisma migrate dev
    ```
 
-3. **Start the server**:
+3. **Seed the database**:
+
+   To populate the database with initial data, run the following command:
+
+   ```bash
+   npm run seed
+   ```
+
+   This will execute the seed script, which adds a set of predefined Pokemon cards to your database.
+
+4. **Start the server**:
 
    ```bash
    npm run start:dev
    ```
 
-4. **Access Swagger documentation** at `http://localhost:3001/api/docs`.
+5. **Access Swagger documentation** at `http://localhost:3001/api/docs`.
 
 ### Frontend
 
@@ -79,11 +119,13 @@ The application is built using Next.js for the frontend and NestJS for the backe
 
 2. **Configure environment**:
 
-   Create a `.env.local` file in the `frontend` directory with:
+   Create a `.env.local` file in the `frontend` directory by copying the `.env.local.example` file:
 
+   ```bash
+   cp .env.local.example .env.local
    ```
-   NEXT_PUBLIC_API_URL=http://localhost:3001
-   ```
+
+   Then, open the `.env.local` file and update the environment variables with your specific configuration if needed.
 
 3. **Start the development server**:
 
@@ -107,7 +149,7 @@ The application is built using Next.js for the frontend and NestJS for the backe
       "type": "Electric",
       "hp": 60,
       "attack": 50,
-      "thumb": "https://example.com/pikachu.png",
+      "thumb": "pikachu.png",
       "weaknesses": ["Ground"],
       "resistances": ["Electric"],
       "expansion": "Base Set",
