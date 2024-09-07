@@ -10,13 +10,15 @@ const mockCards: CardType[] = [
 
 describe('CardList Component', () => {
     test('renders all cards initially', () => {
-        render(<CardList initialCards={mockCards} expansions={[]} types={[]} />);
+        render(<CardList initialCards={mockCards} expansions={['Base Set']} types={['Electric', 'Fire']} />);
         expect(screen.getByText('Pikachu')).toBeInTheDocument();
         expect(screen.getByText('Charmander')).toBeInTheDocument();
     });
 
+
+
     test('filters cards by name', () => {
-        render(<CardList initialCards={mockCards} expansions={[]} types={[]} />);
+        render(<CardList initialCards={mockCards} expansions={['Base Set']} types={['Electric', 'Fire']} />);
 
         // Simulate typing in the name filter
         fireEvent.change(screen.getByPlaceholderText('Filter by name'), { target: { value: 'Pikachu' } });
@@ -26,20 +28,21 @@ describe('CardList Component', () => {
     });
 
     test('filters cards by type', () => {
-        render(<CardList initialCards={mockCards} expansions={[]} types={[]} />);
+        render(<CardList initialCards={mockCards} expansions={[]} types={['Electric', 'Fire']} />);
 
-        // Simulate selecting a type filter
-        fireEvent.change(screen.getByLabelText('Type'), { target: { value: 'Fire' } });
+        // Assuming there's a select element for type filtering
+        const typeSelect = screen.getByRole('combobox', { name: /type/i });
+        fireEvent.change(typeSelect, { target: { value: 'Fire' } });
 
         expect(screen.queryByText('Pikachu')).not.toBeInTheDocument();
         expect(screen.getByText('Charmander')).toBeInTheDocument();
     });
 
     test('filters cards by expansion', () => {
-        render(<CardList initialCards={mockCards} expansions={['Base Set']} types={[]} />);
+        render(<CardList initialCards={mockCards} expansions={['Base Set']} types={['Electric', 'Fire']} />);
 
         // Simulate selecting an expansion filter
-        fireEvent.change(screen.getByLabelText('Expansion'), { target: { value: 'Base Set' } });
+        fireEvent.change(screen.getByRole('combobox', { name: /expansion/i }), { target: { value: 'Base Set' } });
 
         expect(screen.getByText('Pikachu')).toBeInTheDocument();
         expect(screen.getByText('Charmander')).toBeInTheDocument();
