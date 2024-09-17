@@ -270,7 +270,7 @@ Before running the project, ensure you have the following versions installed:
 
 The application is deployed and accessible in a production environment. You can access the live version at the following URL:
 
-https://pokemon-card-battle-frontend.vercel.app
+http://cookunity-challenge-frontend.vercel.app
 
 ## Development assumptions and considerations
 
